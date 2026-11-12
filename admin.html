@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | VIP BARBERS CLUB</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <img src="logo-vip.jpg" alt="Logo VIP Barbers Club" class="login-logo">
+            <h2>VIP BARBERS CLUB</h2>
+            <p>Acceso Seguro al Panel de Administración</p>
+
+            <div class="login-error" id="loginError">
+                <i class="fa-solid fa-triangle-exclamation"></i> Contraseña incorrecta. Por favor intenta de nuevo.
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group-admin" style="text-align: left; margin-bottom: 1.5rem;">
+                    <label class="form-label-admin">Contraseña de Administrador</label>
+                    <input type="password" id="loginPassword" class="form-input-admin" placeholder="Ingresa tu contraseña..." required autofocus>
+                    <div style="font-size: 0.75rem; color: #777; margin-top: 0.4rem;">
+                        <i class="fa-solid fa-key"></i> Clave inicial por defecto: <strong style="color: #D4AF37;">vip2026</strong>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-admin btn-admin-gold" style="width: 100%; padding: 0.95rem;">
+                    <i class="fa-solid fa-lock-open"></i> Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ESTRUCTURA PRINCIPAL DEL DASHBOARD -->
+    <div class="admin-layout">
+        <!-- BARRA LATERAL -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="logo-vip.jpg" alt="Logo VIP Barbers" class="sidebar-logo-img">
+                <div>
+                    <div class="sidebar-brand-name">VIP BARBERS</div>
+                    <div class="sidebar-brand-badge">Panel de Control</div>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <button data-tab="tab-general">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Información & Contacto</span>
+                    </button>
+                </li>
+                <li class="menu-item">
+                    <button data-tab="tab-servicios">
+                        <i class="fa-solid fa-scissors"></i>
+                        <span>Gestión de Servicios</span>
+                    </button>
+                </li>
+                <li class="menu-item">
+                    <button data-tab="tab-medios">
+                        <i class="fa-solid fa-photo-film"></i>
+                        <span>Galería, Fotos & Videos</span>
+                    </button>
+                </li>
+                <li class="menu-item">
+                    <button data-tab="tab-textos">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        <span>Portada & Filosofía</span>
+                    </button>
+                </li>
+                <li class="menu-item">
+                    <button data-tab="tab-ajustes">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Seguridad & Respaldo</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="index.html" target="_blank" class="btn-admin btn-admin-outline" style="width: 100%; font-size: 0.8rem; padding: 0.65rem;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Sitio en Vivo
+                </a>
+                <button id="btnLogout" class="btn-admin btn-admin-danger" style="width: 100%; font-size: 0.8rem; padding: 0.65rem;">
+                    <i class="fa-solid fa-power-off"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- ÁREA PRINCIPAL -->
+        <main class="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <h1 id="currentTabTitle">Información & Contacto</h1>
+                <div class="topbar-actions">
+                    <a href="index.html" target="_blank" class="btn-admin btn-admin-outline btn-admin-sm">
+                        <i class="fa-solid fa-eye"></i> Previsualizar
+                    </a>
+                    <button id="btnSaveAll" class="btn-admin btn-admin-gold btn-admin-sm">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 1: INFORMACIÓN & CONTACTO -->
+                <!-- ======================================================== -->
+                <div class="tab-pane active" id="tab-general">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-building"></i> Datos Comerciales e Institucionales</h2>
+                        </div>
+                        <div class="form-grid-3">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Razón Social</label>
+                                <input type="text" id="bizName" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">NIT</label>
+                                <input type="text" id="bizNit" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Código Postal</label>
+                                <input type="text" id="bizPostal" class="form-input-admin">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Teléfono Móvil (WhatsApp de Reservas)</label>
+                                <input type="text" id="bizPhone" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Correo Electrónico Oficial</label>
+                                <input type="email" id="bizEmail" class="form-input-admin">
+                            </div>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Dirección Completa de la Sede</label>
+                            <input type="text" id="bizAddress" class="form-input-admin">
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Ciudad y Municipio</label>
+                            <input type="text" id="bizCity" class="form-input-admin">
+                        </div>
+                    </div>
+
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-clock"></i> Horarios de Atención al Público</h2>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Lunes a Sábado</label>
+                                <input type="text" id="bizHoursWeek" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Domingos y Festivos</label>
+                                <input type="text" id="bizHoursWeekend" class="form-input-admin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-share-nodes"></i> Enlaces Oficiales de Redes Sociales</h2>
+                        </div>
+                        <div class="form-grid-3">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin"><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram URL</label>
+                                <input type="url" id="socInstagram" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin"><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook URL</label>
+                                <input type="url" id="socFacebook" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin"><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> Enlace WhatsApp Directo</label>
+                                <input type="url" id="socWhatsapp" class="form-input-admin">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 2: GESTIÓN DE SERVICIOS -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-servicios">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-scissors"></i> Catálogo de Servicios y Precios</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">Agrega, modifica precios o elimina servicios que se muestran a los clientes.</p>
+                            </div>
+                            <button class="btn-admin btn-admin-gold btn-admin-sm" onclick="openNewServiceModal()">
+                                <i class="fa-solid fa-plus"></i> Agregar Servicio
+                            </button>
+                        </div>
+
+                        <div class="admin-items-grid" id="servicesListContainer">
+                            <!-- Los servicios se renderizan dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 3: GALERÍA, FOTOS & VIDEOS -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-medios">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-cloud-arrow-up"></i> Cargar Nuevas Imágenes o Videos</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">Arrastra y suelta fotos de cortes, clientes o videos de la barbería.</p>
+                            </div>
+                            <button class="btn-admin btn-admin-outline btn-admin-sm" id="btnAddUrlMedia">
+                                <i class="fa-solid fa-link"></i> Agregar por URL o Archivo
+                            </button>
+                        </div>
+
+                        <!-- Dropzone para subir archivos -->
+                        <div class="media-dropzone" id="mediaDropzone">
+                            <i class="fa-solid fa-images dropzone-icon"></i>
+                            <div class="dropzone-title">Haz clic aquí o arrastra una imagen o video (MP4)</div>
+                            <div class="dropzone-desc">Formatos soportados: JPG, PNG, WebP, MP4, WebM</div>
+                            <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm" style="display: none;">
+                        </div>
+
+                        <div class="card-admin-header" style="margin-top: 3rem;">
+                            <h3 class="card-admin-title"><i class="fa-solid fa-grip"></i> Elementos Actuales en la Galería</h3>
+                        </div>
+
+                        <div class="admin-items-grid" id="galleryListContainer">
+                            <!-- Los elementos multimedia se renderizan dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 4: PORTADA & TEXTOS DE MARCA -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-textos">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-font"></i> Textos Principales de la Portada (Hero)</h2>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Etiqueta Superior (Badge)</label>
+                                <input type="text" id="heroTag" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Título Principal</label>
+                                <input type="text" id="heroTitle" class="form-input-admin">
+                            </div>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Eslogan Destacado</label>
+                            <input type="text" id="heroAccent" class="form-input-admin">
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Palabras y Pensamiento de la Propietaria (Cita)</label>
+                            <textarea id="heroQuote" class="form-input-admin" style="min-height: 80px;"></textarea>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Párrafo Descriptivo de la Experiencia</label>
+                            <textarea id="heroDesc" class="form-input-admin" style="min-height: 100px;"></textarea>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Fondo de Portada (Nombre de archivo o URL)</label>
+                                <input type="text" id="heroBgMedia" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Tipo de Fondo</label>
+                                <select id="heroBgType" class="form-input-admin">
+                                    <option value="image">Imagen de Fondo</option>
+                                    <option value="video">Video de Fondo (MP4)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA 5: SEGURIDAD & RESPALDO -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-ajustes">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-database"></i> Copia de Seguridad y Restauración</h2>
+                        </div>
+                        <p style="color: #A0A0A0; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                            Puedes descargar toda la configuración de la página (textos, precios, servicios e imágenes) en un archivo JSON seguro para respaldar tus datos o transferirlos a otro equipo.
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                            <button class="btn-admin btn-admin-gold" id="btnExportJson">
+                                <i class="fa-solid fa-download"></i> Descargar Respaldo JSON
+                            </button>
+                            <button class="btn-admin btn-admin-outline" id="btnImportJson">
+                                <i class="fa-solid fa-upload"></i> Importar Respaldo JSON
+                            </button>
+                            <input type="file" id="importJsonFile" accept=".json" style="display: none;">
+                            <button class="btn-admin btn-admin-danger" id="btnResetDefaults">
+                                <i class="fa-solid fa-rotate-left"></i> Restaurar Valores de Fábrica
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-key"></i> Cambiar Contraseña del Administrador</h2>
+                        </div>
+                        <form id="formChangePass" style="max-width: 500px;">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Contraseña Actual</label>
+                                <input type="password" id="passActual" class="form-input-admin" required>
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Nueva Contraseña</label>
+                                <input type="password" id="passNueva" class="form-input-admin" required minlength="4">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Confirmar Nueva Contraseña</label>
+                                <input type="password" id="passConfirm" class="form-input-admin" required minlength="4">
+                            </div>
+                            <button type="submit" class="btn-admin btn-admin-gold">
+                                <i class="fa-solid fa-check"></i> Actualizar Contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL PARA AGREGAR / EDITAR SERVICIO -->
+    <div class="admin-modal" id="serviceModal">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="serviceModalTitle">Agregar Servicio</h3>
+                <button class="modal-close-admin" onclick="closeServiceModal()">&times;</button>
+            </div>
+            <form id="serviceForm">
+                <input type="hidden" id="serviceEditId">
+
+                <div class="form-group-admin">
+                    <label class="form-label-admin">Nombre del Servicio *</label>
+                    <input type="text" id="srvTitle" class="form-input-admin" required placeholder="Ej. Corte VIP & Asesoría">
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group-admin">
+                        <label class="form-label-admin">Distintivo / Etiqueta</label>
+                        <input type="text" id="srvBadge" class="form-input-admin" placeholder="Ej. Firma VIP, Popular">
+                    </div>
+                    <div class="form-group-admin">
+                        <label class="form-label-admin">Precio Sugerido (Opcional)</label>
+                        <input type="text" id="srvPrice" class="form-input-admin" placeholder="Ej. $35.000">
+                    </div>
+                </div>
+
+                <div class="form-group-admin">
+                    <label class="form-label-admin">Descripción Detallada *</label>
+                    <textarea id="srvDesc" class="form-input-admin" required placeholder="Explica en qué consiste el servicio..."></textarea>
+                </div>
+
+                <div class="form-group-admin">
+                    <label class="form-label-admin">Beneficios Incluidos (Uno por línea)</label>
+                    <textarea id="srvPerks" class="form-input-admin" placeholder="Lavado capilar&#10;Vapor de ozono&#10;Peinado final"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-admin btn-admin-outline" onclick="closeServiceModal()">Cancelar</button>
+                    <button type="submit" class="btn-admin btn-admin-gold">Guardar Servicio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="admin.js"></script>
+</body>
+</html>
