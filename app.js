@@ -8,6 +8,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // 0. Sincronización Dinámica con el Panel de Administración (localStorage)
     applyAdminSiteData();
 
+    // Acceso Discreto y Seguro al Panel Administrativo
+    // Método 1: Atajo de teclado (Ctrl + Shift + A o Cmd + Shift + A)
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+            e.preventDefault();
+            window.location.href = 'admin.html';
+        }
+    });
+
+    // Método 2: 5 clics rápidos consecutivos en el ícono de la corona del logo
+    const brandIcon = document.querySelector('.brand-icon');
+    if (brandIcon) {
+        let clickCount = 0;
+        let clickTimer = null;
+        brandIcon.addEventListener('click', (e) => {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount >= 5) {
+                clickCount = 0;
+                window.location.href = 'admin.html';
+            } else {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 2000);
+            }
+        });
+    }
+
     // 1. Navegación Móvil
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');

@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración | VIP BARBERS CLUB</title>
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="same-origin">
+    <title>Acceso Seguro | VIP BARBERS CLUB</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,16 +29,17 @@
             <p>Acceso Seguro al Panel de Administración</p>
 
             <div class="login-error" id="loginError">
-                <i class="fa-solid fa-triangle-exclamation"></i> Contraseña incorrecta. Por favor intenta de nuevo.
+                <i class="fa-solid fa-triangle-exclamation"></i> <span id="loginErrorMsg">Contraseña incorrecta. Por favor intenta de nuevo.</span>
+            </div>
+
+            <div class="login-error" id="loginLockout" style="background: rgba(230, 57, 70, 0.25); border-color: #E63946; color: #FFA69E;">
+                <i class="fa-solid fa-shield-halved"></i> <strong>Acceso temporalmente bloqueado</strong> por exceso de intentos fallidos. Intenta más tarde.
             </div>
 
             <form id="loginForm">
                 <div class="form-group-admin" style="text-align: left; margin-bottom: 1.5rem;">
                     <label class="form-label-admin">Contraseña de Administrador</label>
-                    <input type="password" id="loginPassword" class="form-input-admin" placeholder="Ingresa tu contraseña..." required autofocus>
-                    <div style="font-size: 0.75rem; color: #777; margin-top: 0.4rem;">
-                        <i class="fa-solid fa-key"></i> Clave inicial por defecto: <strong style="color: #D4AF37;">vip2026</strong>
-                    </div>
+                    <input type="password" id="loginPassword" class="form-input-admin" placeholder="••••••••" required autofocus autocomplete="current-password">
                 </div>
 
                 <button type="submit" class="btn-admin btn-admin-gold" style="width: 100%; padding: 0.95rem;">

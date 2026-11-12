@@ -1,11 +1,37 @@
 /**
- * VIP BARBERS CLUB - Lógica del Panel de Administración
- * Gestión completa de información, servicios, imágenes y videos
+ * VIP BARBERS CLUB - Lógica del Panel de Administración (Seguridad Reforzada)
+ * Medellín, Colombia · Av. Nutibara
  */
 
+// 1. Prevención Anti-Clickjacking (Frame Buster)
+if (window.top !== window.self) {
+    window.top.location = window.self.location;
+}
+
 const STORAGE_KEY = 'vipbarbers_site_data';
-const PASS_KEY = 'vipbarbers_admin_password';
-const DEFAULT_PASS = 'vip2026';
+const PASS_HASH_KEY = 'vipbarbers_admin_passhash';
+// Hash SHA-256 de 'vip2026'
+const DEFAULT_PASS_HASH = 'daf3f58a971974790a943e8bbf216ada8ba72062e4eeee5540e15fa5a6d1076e';
+
+const ATTEMPTS_KEY = 'vipbarbers_login_attempts';
+const LOCKOUT_KEY = 'vipbarbers_lockout_until';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutos
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutos de inactividad
+
+// Función de Hash Criptográfico SHA-256 nativo
+async function computeSHA256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Sanitización contra inyección de código (XSS)
+function sanitizeText(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[<>]/g, tag => ({ '<': '&lt;', '>': '&gt;' }[tag] || tag));
+}
 
 // Datos predeterminados de la barbería
 const DEFAULT_SITE_DATA = {
@@ -135,32 +161,92 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGalleryList();
     initMediaUploadHandlers();
     initBackupHandlers();
+    initSessionTimeoutTracker();
 });
 
-// 1. Autenticación y Seguridad
+// 2. Autenticación con Protección Contra Fuerza Bruta y Hashing SHA-256
 function initAuth() {
     const loginScreen = document.getElementById('loginScreen');
     const loginForm = document.getElementById('loginForm');
     const loginPassword = document.getElementById('loginPassword');
     const loginError = document.getElementById('loginError');
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+    const loginLockout = document.getElementById('loginLockout');
     const btnLogout = document.getElementById('btnLogout');
 
+    // Verificar si está en período de bloqueo
+    function checkLockout() {
+        const lockUntil = parseInt(localStorage.getItem(LOCKOUT_KEY) || '0');
+        const now = Date.now();
+        if (lockUntil > now) {
+            const minutesLeft = Math.ceil((lockUntil - now) / 60000);
+            if (loginLockout) {
+                loginLockout.innerHTML = `<i class="fa-solid fa-shield-halved"></i> <strong>Acceso bloqueado por seguridad:</strong> Demasiados intentos fallidos. Intenta nuevamente en ${minutesLeft} minuto(s).`;
+                loginLockout.style.display = 'block';
+            }
+            if (loginForm) {
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.disabled = true;
+            }
+            return true;
+        } else {
+            if (loginLockout) loginLockout.style.display = 'none';
+            if (loginForm) {
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.disabled = false;
+            }
+            return false;
+        }
+    }
+
+    checkLockout();
+
+    // Comprobar sesión activa y no expirada
     const isLogged = sessionStorage.getItem('vipbarbers_admin_logged');
-    if (isLogged === 'true') {
+    const loginTime = parseInt(sessionStorage.getItem('vipbarbers_login_time') || '0');
+    if (isLogged === 'true' && (Date.now() - loginTime) < SESSION_TIMEOUT_MS) {
         if (loginScreen) loginScreen.style.display = 'none';
+        sessionStorage.setItem('vipbarbers_login_time', Date.now().toString());
+    } else {
+        sessionStorage.removeItem('vipbarbers_admin_logged');
+        sessionStorage.removeItem('vipbarbers_login_time');
     }
 
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const currentPass = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
-            if (loginPassword.value === currentPass) {
+            if (checkLockout()) return;
+
+            const inputPass = loginPassword.value;
+            const inputHash = await computeSHA256(inputPass);
+            const storedHash = localStorage.getItem(PASS_HASH_KEY) || DEFAULT_PASS_HASH;
+
+            if (inputHash === storedHash) {
+                // Éxito: limpiar intentos
+                localStorage.removeItem(ATTEMPTS_KEY);
+                localStorage.removeItem(LOCKOUT_KEY);
                 sessionStorage.setItem('vipbarbers_admin_logged', 'true');
+                sessionStorage.setItem('vipbarbers_login_time', Date.now().toString());
                 loginScreen.style.display = 'none';
-                loginError.style.display = 'none';
-                showToast('¡Bienvenido al Panel VIP Barbers Club!');
+                if (loginError) loginError.style.display = 'none';
+                loginPassword.value = '';
+                showToast('¡Sesión iniciada con éxito!');
             } else {
-                loginError.style.display = 'block';
+                // Fallo: registrar intento
+                let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
+                localStorage.setItem(ATTEMPTS_KEY, attempts.toString());
+
+                if (attempts >= MAX_ATTEMPTS) {
+                    const lockUntil = Date.now() + LOCKOUT_DURATION_MS;
+                    localStorage.setItem(LOCKOUT_KEY, lockUntil.toString());
+                    checkLockout();
+                } else {
+                    const left = MAX_ATTEMPTS - attempts;
+                    if (loginErrorMsg) {
+                        loginErrorMsg.textContent = `Contraseña incorrecta. Te quedan ${left} intento(s) antes del bloqueo temporal.`;
+                    }
+                    if (loginError) loginError.style.display = 'block';
+                }
                 loginPassword.value = '';
                 loginPassword.focus();
             }
@@ -170,12 +256,24 @@ function initAuth() {
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
             sessionStorage.removeItem('vipbarbers_admin_logged');
+            sessionStorage.removeItem('vipbarbers_login_time');
             location.reload();
         });
     }
 }
 
-// 2. Carga y Guardado de Datos
+// Control de expiración por inactividad (30 minutos)
+function initSessionTimeoutTracker() {
+    ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+        window.addEventListener(evt, () => {
+            if (sessionStorage.getItem('vipbarbers_admin_logged') === 'true') {
+                sessionStorage.setItem('vipbarbers_login_time', Date.now().toString());
+            }
+        }, { passive: true });
+    });
+}
+
+// 3. Carga y Guardado de Datos
 function loadSiteData() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -203,7 +301,7 @@ function saveSiteData(showNotification = true) {
     }
 }
 
-// 3. Navegación por Pestañas
+// 4. Navegación por Pestañas
 function initNavigationTabs() {
     const menuButtons = document.querySelectorAll('.sidebar-menu .menu-item button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -213,11 +311,9 @@ function initNavigationTabs() {
         btn.addEventListener('click', () => {
             const targetTab = btn.getAttribute('data-tab');
 
-            // Actualizar menú activo
             document.querySelectorAll('.sidebar-menu .menu-item').forEach(li => li.classList.remove('active'));
             btn.parentElement.classList.add('active');
 
-            // Actualizar pane
             tabPanes.forEach(pane => {
                 pane.classList.remove('active');
                 if (pane.id === targetTab) {
@@ -225,14 +321,12 @@ function initNavigationTabs() {
                 }
             });
 
-            // Título superior
             if (tabTitleHeader) {
                 tabTitleHeader.textContent = btn.innerText.trim();
             }
         });
     });
 
-    // Botón Guardar en Topbar
     const btnSaveTop = document.getElementById('btnSaveAll');
     if (btnSaveTop) {
         btnSaveTop.addEventListener('click', () => {
@@ -242,11 +336,10 @@ function initNavigationTabs() {
     }
 }
 
-// 4. Poblar Formularios con los datos actuales
+// 5. Poblar Formularios con los datos actuales
 function populateAllForms() {
     if (!siteData) return;
 
-    // Contacto & Negocio
     setVal('bizName', siteData.business.name);
     setVal('bizNit', siteData.business.nit);
     setVal('bizPhone', siteData.business.phone);
@@ -257,12 +350,10 @@ function populateAllForms() {
     setVal('bizHoursWeek', siteData.business.hoursWeek);
     setVal('bizHoursWeekend', siteData.business.hoursWeekend);
 
-    // Redes Sociales
     setVal('socInstagram', siteData.socials.instagram);
     setVal('socFacebook', siteData.socials.facebook);
     setVal('socWhatsapp', siteData.socials.whatsapp);
 
-    // Hero & Textos
     setVal('heroTag', siteData.hero.tag);
     setVal('heroTitle', siteData.hero.title);
     setVal('heroAccent', siteData.hero.accentText);
@@ -284,32 +375,31 @@ function getVal(id) {
     return el ? el.value.trim() : '';
 }
 
-// Recopilar datos de los formularios
 function gatherFormData() {
-    siteData.business.name = getVal('bizName');
-    siteData.business.nit = getVal('bizNit');
-    siteData.business.phone = getVal('bizPhone');
-    siteData.business.email = getVal('bizEmail');
-    siteData.business.address = getVal('bizAddress');
-    siteData.business.city = getVal('bizCity');
-    siteData.business.postalCode = getVal('bizPostal');
-    siteData.business.hoursWeek = getVal('bizHoursWeek');
-    siteData.business.hoursWeekend = getVal('bizHoursWeekend');
+    siteData.business.name = sanitizeText(getVal('bizName'));
+    siteData.business.nit = sanitizeText(getVal('bizNit'));
+    siteData.business.phone = sanitizeText(getVal('bizPhone'));
+    siteData.business.email = sanitizeText(getVal('bizEmail'));
+    siteData.business.address = sanitizeText(getVal('bizAddress'));
+    siteData.business.city = sanitizeText(getVal('bizCity'));
+    siteData.business.postalCode = sanitizeText(getVal('bizPostal'));
+    siteData.business.hoursWeek = sanitizeText(getVal('bizHoursWeek'));
+    siteData.business.hoursWeekend = sanitizeText(getVal('bizHoursWeekend'));
 
     siteData.socials.instagram = getVal('socInstagram');
     siteData.socials.facebook = getVal('socFacebook');
     siteData.socials.whatsapp = getVal('socWhatsapp');
 
-    siteData.hero.tag = getVal('heroTag');
-    siteData.hero.title = getVal('heroTitle');
-    siteData.hero.accentText = getVal('heroAccent');
-    siteData.hero.quote = getVal('heroQuote');
-    siteData.hero.description = getVal('heroDesc');
+    siteData.hero.tag = sanitizeText(getVal('heroTag'));
+    siteData.hero.title = sanitizeText(getVal('heroTitle'));
+    siteData.hero.accentText = sanitizeText(getVal('heroAccent'));
+    siteData.hero.quote = sanitizeText(getVal('heroQuote'));
+    siteData.hero.description = sanitizeText(getVal('heroDesc'));
     siteData.hero.bgMedia = getVal('heroBgMedia');
     siteData.hero.bgMediaType = getVal('heroBgType');
 }
 
-// 5. Gestión de Servicios
+// 6. Gestión de Servicios
 function renderServicesList() {
     const container = document.getElementById('servicesListContainer');
     if (!container) return;
@@ -345,7 +435,6 @@ function renderServicesList() {
     });
 }
 
-// Modal Servicio
 const serviceModal = document.getElementById('serviceModal');
 const serviceForm = document.getElementById('serviceForm');
 
@@ -387,11 +476,11 @@ if (serviceForm) {
     serviceForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const editId = document.getElementById('serviceEditId').value;
-        const title = document.getElementById('srvTitle').value.trim();
-        const badge = document.getElementById('srvBadge').value.trim();
-        const price = document.getElementById('srvPrice').value.trim();
-        const desc = document.getElementById('srvDesc').value.trim();
-        const perks = document.getElementById('srvPerks').value.split('\n').map(p => p.trim()).filter(Boolean);
+        const title = sanitizeText(document.getElementById('srvTitle').value.trim());
+        const badge = sanitizeText(document.getElementById('srvBadge').value.trim());
+        const price = sanitizeText(document.getElementById('srvPrice').value.trim());
+        const desc = sanitizeText(document.getElementById('srvDesc').value.trim());
+        const perks = document.getElementById('srvPerks').value.split('\n').map(p => sanitizeText(p.trim())).filter(Boolean);
 
         if (editId) {
             const srv = siteData.services.find(s => s.id === parseInt(editId));
@@ -421,7 +510,7 @@ if (serviceForm) {
     });
 }
 
-// 6. Gestión de Medios (Galería de Imágenes & Videos)
+// 7. Gestión de Medios (Galería de Imágenes & Videos)
 function renderGalleryList() {
     const container = document.getElementById('galleryListContainer');
     if (!container) return;
@@ -474,7 +563,6 @@ window.deleteGalleryItem = function(id) {
     }
 };
 
-// Subida de Archivos y Medios
 function initMediaUploadHandlers() {
     const fileInput = document.getElementById('mediaFileInput');
     const dropzone = document.getElementById('mediaDropzone');
@@ -507,13 +595,12 @@ function initMediaUploadHandlers() {
         });
     }
 
-    // Modal para agregar por URL (video de YouTube/MP4 o imagen externa)
     if (btnAddUrlMedia) {
         btnAddUrlMedia.addEventListener('click', () => {
-            const url = prompt('Ingresa la URL o nombre del archivo de imagen o video (ej. promo.mp4 o https://...):');
+            const url = prompt('Ingresa la URL o nombre del archivo (ej. video.mp4 o https://...):');
             if (!url) return;
-            const title = prompt('Título para la galería:') || 'Nuevo Elemento';
-            const subtitle = prompt('Subtítulo o descripción:') || 'Cortes con precisión y actitud';
+            const title = sanitizeText(prompt('Título para la galería:') || 'Nuevo Elemento');
+            const subtitle = sanitizeText(prompt('Subtítulo o descripción:') || 'Cortes con precisión y actitud');
             const isVideo = url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video');
 
             siteData.gallery.unshift({
@@ -539,17 +626,16 @@ function handleUploadedFile(file) {
         return;
     }
 
-    // Si el archivo supera 4MB advertir sobre límites de localStorage
     if (file.size > 4 * 1024 * 1024) {
-        const proceed = confirm('El archivo pesa más de 4MB. Los navegadores pueden limitar el guardado local de archivos muy pesados. ¿Deseas intentar cargarlo de todas formas?');
+        const proceed = confirm('El archivo pesa más de 4MB. ¿Deseas cargarlo de todas formas?');
         if (!proceed) return;
     }
 
     const reader = new FileReader();
     reader.onload = function(e) {
         const resultBase64 = e.target.result;
-        const title = prompt('Título para este nuevo elemento:', file.name.replace(/\.[^/.]+$/, '')) || 'Nuevo Estilo VIP';
-        const subtitle = prompt('Subtítulo o descripción:') || 'Cortes con actitud · Av. Nutibara';
+        const title = sanitizeText(prompt('Título para este nuevo elemento:', file.name.replace(/\.[^/.]+$/, '')) || 'Nuevo Estilo VIP');
+        const subtitle = sanitizeText(prompt('Subtítulo o descripción:') || 'Cortes con actitud · Av. Nutibara');
 
         siteData.gallery.unshift({
             id: Date.now(),
@@ -566,7 +652,7 @@ function handleUploadedFile(file) {
     reader.readAsDataURL(file);
 }
 
-// 7. Respaldo, Restauración y Cambio de Clave
+// 8. Respaldo, Restauración y Cambio Seguro de Clave con SHA-256
 function initBackupHandlers() {
     const btnExport = document.getElementById('btnExportJson');
     const btnImport = document.getElementById('btnImportJson');
@@ -574,7 +660,6 @@ function initBackupHandlers() {
     const btnResetDefaults = document.getElementById('btnResetDefaults');
     const formPass = document.getElementById('formChangePass');
 
-    // Exportar JSON
     if (btnExport) {
         btnExport.addEventListener('click', () => {
             gatherFormData();
@@ -589,7 +674,6 @@ function initBackupHandlers() {
         });
     }
 
-    // Importar JSON
     if (btnImport && importInput) {
         btnImport.addEventListener('click', () => importInput.click());
         importInput.addEventListener('change', () => {
@@ -617,7 +701,6 @@ function initBackupHandlers() {
         });
     }
 
-    // Restaurar Valores de Fábrica
     if (btnResetDefaults) {
         btnResetDefaults.addEventListener('click', () => {
             if (confirm('¿Seguro que deseas restaurar todos los textos, servicios e imágenes a sus valores iniciales?')) {
@@ -631,22 +714,24 @@ function initBackupHandlers() {
         });
     }
 
-    // Cambiar Contraseña
+    // Cambio Seguro de Contraseña (Validando Hash SHA-256)
     if (formPass) {
-        formPass.addEventListener('submit', (e) => {
+        formPass.addEventListener('submit', async (e) => {
             e.preventDefault();
             const current = document.getElementById('passActual').value;
             const newPass = document.getElementById('passNueva').value;
             const confirmPass = document.getElementById('passConfirm').value;
 
-            const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
-            if (current !== stored) {
+            const currentHash = await computeSHA256(current);
+            const storedHash = localStorage.getItem(PASS_HASH_KEY) || DEFAULT_PASS_HASH;
+
+            if (currentHash !== storedHash) {
                 alert('La contraseña actual es incorrecta.');
                 return;
             }
 
-            if (newPass.length < 4) {
-                alert('La nueva contraseña debe tener al menos 4 caracteres.');
+            if (newPass.length < 6) {
+                alert('Por seguridad, la nueva contraseña debe tener al menos 6 caracteres.');
                 return;
             }
 
@@ -655,9 +740,10 @@ function initBackupHandlers() {
                 return;
             }
 
-            localStorage.setItem(PASS_KEY, newPass);
+            const newHash = await computeSHA256(newPass);
+            localStorage.setItem(PASS_HASH_KEY, newHash);
             formPass.reset();
-            showToast('¡Contraseña de acceso actualizada con éxito!');
+            showToast('¡Contraseña actualizada de forma segura (cifrada con SHA-256)!');
         });
     }
 }
