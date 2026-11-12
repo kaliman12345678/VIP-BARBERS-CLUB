@@ -30,14 +30,15 @@
     <!-- BARRA SUPERIOR INSTITUCIONAL -->
     <div class="top-bar">
         <div class="container top-bar-content">
-            <div class="top-bar-badge">
-                <i class="fa-solid fa-crown"></i>
-                <span><strong>VIP BARBERS CLUB</strong> · Transversal 39B #72-101 2do piso Av. Nutibara · Medellín (C.P. 050010)</span>
+            <div class="top-bar-left">
+                <span class="top-pill"><i class="fa-solid fa-crown text-gold"></i> VIP BARBERS CLUB</span>
+                <span class="top-divider">·</span>
+                <span class="top-address"><i class="fa-solid fa-location-dot"></i> Av. Nutibara · Transversal 39B #72-101 (2° Piso), Medellín</span>
             </div>
-            <div class="top-bar-links">
-                <a href="tel:3043059911"><i class="fa-solid fa-phone"></i> +57 304 305 9911</a>
-                <a href="mailto:servicioalcliente@vipbarbersclub.space"><i class="fa-regular fa-envelope"></i> servicioalcliente@vipbarbersclub.space</a>
-                <span><i class="fa-solid fa-clock"></i> Lun - Sáb: 9:00 a.m. - 8:00 p.m.</span>
+            <div class="top-bar-right">
+                <span class="top-hours"><i class="fa-regular fa-clock"></i> Lun - Sáb: 9:00 a.m. - 8:00 p.m.</span>
+                <span class="top-divider">·</span>
+                <a href="tel:3043059911" class="top-phone"><i class="fa-solid fa-phone"></i> +57 304 305 9911</a>
             </div>
         </div>
     </div>
@@ -61,6 +62,7 @@
     <!-- NAVBAR PRINCIPAL -->
     <header class="navbar" id="navbar">
         <div class="container nav-container">
+            <!-- LOGO OFICIAL -->
             <a href="#inicio" class="brand-logo" aria-label="VIP Barbers Club - Inicio">
                 <img src="logo-vip.jpg" alt="Logo VIP Barbers Club" class="logo-circle-img">
                 <div class="logo-text-block">
@@ -69,38 +71,57 @@
                 </div>
             </a>
 
-            <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
+            <!-- ENLACES DE NAVEGACIÓN -->
             <nav class="nav-links" id="navLinks">
                 <a href="#inicio" class="nav-link active">Inicio</a>
-                <a href="#experiencia" class="nav-link">La Experiencia</a>
+                <a href="#experiencia" class="nav-link">Experiencia</a>
                 <a href="#rituales" class="nav-link">Ritual Spa</a>
                 <a href="#servicios" class="nav-link">Servicios</a>
                 <a href="#galeria" class="nav-link">Galería</a>
                 <a href="#institucional" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Ubicación</a>
 
-                <!-- Redes Sociales Rápidas -->
-                <div class="nav-socials">
-                    <a href="https://www.instagram.com/vipbarbersclub?dlrf=MWNwbzd5czJ4cXJ2bg==" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram VIP Barbers Club">
+                <!-- Acciones móviles dentro del drawer -->
+                <div class="mobile-menu-actions">
+                    <div class="mobile-socials">
+                        <a href="https://www.instagram.com/vipbarbersclub?dlrf=MWNwbzd5czJ4cXJ2bg==" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram VIP Barbers Club">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/share/18VDVCjF9Z/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook VIP Barbers Club">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="https://wa.me/573043059911" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="WhatsApp VIP Barbers Club">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <a href="#contacto" class="btn btn-gold nav-cta-btn" style="width: 100%; text-align: center;">
+                        <i class="fa-brands fa-whatsapp"></i> Reservar Cita
+                    </a>
+                </div>
+            </nav>
+
+            <!-- ACCIONES ESCRITORIO (Redes y Botón Reserva) -->
+            <div class="nav-desktop-actions">
+                <div class="nav-social-pills">
+                    <a href="https://www.instagram.com/vipbarbersclub?dlrf=MWNwbzd5czJ4cXJ2bg==" target="_blank" rel="noopener noreferrer" class="social-pill-btn" aria-label="Instagram VIP Barbers Club" title="Instagram">
                         <i class="fa-brands fa-instagram"></i>
                     </a>
-                    <a href="https://www.facebook.com/share/18VDVCjF9Z/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook VIP Barbers Club">
+                    <a href="https://www.facebook.com/share/18VDVCjF9Z/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-pill-btn" aria-label="Facebook VIP Barbers Club" title="Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
-                    </a>
-                    <a href="https://wa.me/573043059911" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="WhatsApp VIP Barbers Club">
-                        <i class="fa-brands fa-whatsapp"></i>
                     </a>
                 </div>
 
-                <a href="#contacto" class="btn btn-gold nav-cta-btn">
-                    <i class="fa-brands fa-whatsapp"></i> Reservar Cita
+                <a href="#contacto" class="btn-nav-reserve">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Reservar Cita</span>
                 </a>
-            </nav>
+
+                <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
     </header>
 
