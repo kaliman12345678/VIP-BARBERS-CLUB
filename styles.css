@@ -1804,10 +1804,19 @@ textarea.form-control {
     }
 }
 
-/* Breakpoint Responsive a los 1180px para evitar saturación */
+/* ==========================================================================
+   OPTIMIZACIÓN RESPONSIVA Y EXPERIENCIA MÓVIL (MOBILE-FIRST POLISH)
+   ========================================================================== */
+
+/* Breakpoint 1180px: Tablet Grande / Laptop Pequeña */
 @media (max-width: 1180px) {
     .hamburger {
         display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
     }
     .nav-desktop-actions .nav-social-pills,
     .nav-desktop-actions .btn-nav-reserve {
@@ -1820,14 +1829,17 @@ textarea.form-control {
         right: 0;
         background-color: #0B0B0B;
         flex-direction: column;
-        padding: 2.5rem 2rem;
-        gap: 1.35rem;
+        padding: 2rem 1.75rem;
+        gap: 1.25rem;
         box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95);
         border-bottom: 2px solid var(--gold-primary);
         transform: translateY(-120%);
         opacity: 0;
         visibility: hidden;
         transition: all var(--transition-base);
+        max-height: calc(100vh - 82px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .nav-links.active {
         transform: translateY(0);
@@ -1854,6 +1866,7 @@ textarea.form-control {
     }
 }
 
+/* Breakpoint 900px: Tablet Media */
 @media (max-width: 900px) {
     .top-bar-content {
         flex-direction: column;
@@ -1868,27 +1881,54 @@ textarea.form-control {
     }
 }
 
-@media (max-width: 600px) {
-    .top-bar-left .top-address {
-        display: none;
-    }
-}
-
+/* Breakpoint 768px: Smartphones Grandes & Tablets */
 @media (max-width: 768px) {
     .top-bar-links {
         display: none;
     }
+    .section {
+        padding: 4rem 0;
+    }
+    .section-header {
+        margin-bottom: 2.5rem;
+    }
     .hero {
-        padding: 5rem 0 6rem;
+        padding: 4.5rem 0 5rem;
+        min-height: auto;
+    }
+    .hero-title {
+        font-size: clamp(2.1rem, 7vw, 3rem);
+    }
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .ritual-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     .feature-media-frame img {
-        height: 350px;
+        height: 300px;
     }
     .gallery-grid {
         grid-template-columns: 1fr;
     }
     .form-row {
         grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .form-control, select.form-control, textarea.form-control {
+        font-size: 16px !important; /* Previene auto-zoom molesto en iOS Safari */
+    }
+    .booking-form-panel {
+        padding: 2.25rem 1.5rem;
+    }
+    .contact-info-panel {
+        padding: 2.25rem 1.5rem;
     }
     .footer-grid {
         grid-template-columns: 1fr;
@@ -1902,10 +1942,102 @@ textarea.form-control {
         justify-content: flex-end;
     }
     .legal-card-luxury {
-        padding: 2.25rem 1.75rem;
+        padding: 2.25rem 1.5rem;
+    }
+    .floating-whatsapp {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 54px;
+        height: 54px;
+        font-size: 1.6rem;
     }
 }
 
+/* Breakpoint 600px: Dispositivos Móviles Estándar */
+@media (max-width: 600px) {
+    .top-bar-left .top-address {
+        display: none;
+    }
+    .container {
+        padding: 0 1.25rem;
+    }
+    .hero-cta-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.85rem;
+    }
+    .hero-cta-group .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    .maps-direction-banner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 0.85rem;
+    }
+    .maps-direction-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    .footer-bottom div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .footer-bottom a {
+        margin-right: 0 !important;
+    }
+    .modal {
+        padding: 0.75rem;
+    }
+    .modal-box {
+        max-height: 92vh;
+        border-radius: var(--radius-md);
+    }
+    .modal-head {
+        padding: 1.15rem 1.25rem;
+    }
+    .modal-head h2 {
+        font-size: 1.15rem;
+    }
+    .modal-body {
+        padding: 1.5rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Breakpoint 420px: Pantallas Angostas (iPhone SE, etc.) */
+@media (max-width: 420px) {
+    .logo-title {
+        font-size: 1.05rem;
+        letter-spacing: 0.05em;
+    }
+    .logo-subtitle {
+        font-size: 0.6rem;
+    }
+    .logo-circle-img {
+        width: 40px;
+        height: 40px;
+    }
+    .hero-stats {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.25rem;
+    }
+    .service-card {
+        padding: 1.75rem 1.25rem;
+    }
+    .ritual-card {
+        padding: 2rem 1.25rem;
+    }
+}
 /* ==========================================================================
    GOOGLE MAPS INTERACTIVO & BOTÓN CÓMO LLEGAR
    ========================================================================== */

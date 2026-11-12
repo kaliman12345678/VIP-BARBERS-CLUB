@@ -36,24 +36,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 1. Navegación Móvil
+    // 1. Navegación Móvil Fluida y Ergonomía Táctil
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
-    const navItems = document.querySelectorAll('.nav-link');
 
     if (hamburger && navLinks) {
+        function closeMobileMenu() {
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
         hamburger.addEventListener('click', () => {
             const isOpen = navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
             hamburger.setAttribute('aria-expanded', isOpen);
+            // Bloquea el scroll de fondo mientras el menú esté abierto en móviles
+            document.body.style.overflow = isOpen ? 'hidden' : '';
         });
 
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                hamburger.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
+        // Cierra el menú al tocar cualquier enlace dentro del drawer
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
             });
+        });
+
+        // Cierra el menú al tocar fuera del panel en pantalla móvil
+        document.addEventListener('click', (e) => {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                closeMobileMenu();
+            }
         });
     }
 
