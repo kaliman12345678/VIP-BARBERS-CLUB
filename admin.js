@@ -9,9 +9,15 @@ if (window.top !== window.self) {
 }
 
 const STORAGE_KEY = 'vipbarbers_site_data';
+const EMAIL_HASH_KEY = 'vipbarbers_admin_emailhash';
 const PASS_HASH_KEY = 'vipbarbers_admin_passhash';
-// Hash SHA-256 de 'vip2026'
-const DEFAULT_PASS_HASH = 'daf3f58a971974790a943e8bbf216ada8ba72062e4eeee5540e15fa5a6d1076e';
+
+// HASHES CRIPTOGRÁFICOS UNIDIRECCIONALES (SHA-256)
+// Las credenciales NUNCA están expuestas en texto plano en el repositorio.
+// Hash SHA-256 del correo administrativo autorizado
+const DEFAULT_EMAIL_HASH = '6fadbda381fbf3b94a33da2379227d5a8c13da4e5a797364b5387adafcfd2fd7';
+// Hash SHA-256 de la contraseña configurada
+const DEFAULT_PASS_HASH = 'd4ac8475751fe9d33b81c8d90e339cc330531908cee560b8d1dd809f3805840f';
 
 const ATTEMPTS_KEY = 'vipbarbers_login_attempts';
 const LOCKOUT_KEY = 'vipbarbers_lockout_until';
@@ -168,11 +174,30 @@ document.addEventListener('DOMContentLoaded', () => {
 function initAuth() {
     const loginScreen = document.getElementById('loginScreen');
     const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
+    const togglePassBtn = document.getElementById('togglePasswordVisibility');
     const loginError = document.getElementById('loginError');
     const loginErrorMsg = document.getElementById('loginErrorMsg');
     const loginLockout = document.getElementById('loginLockout');
     const btnLogout = document.getElementById('btnLogout');
+
+    // Botón para alternar visibilidad de la contraseña
+    if (togglePassBtn && loginPassword) {
+        togglePassBtn.addEventListener('click', () => {
+            const isPass = loginPassword.type === 'password';
+            loginPassword.type = isPass ? 'text' : 'password';
+            togglePassBtn.innerHTML = isPass ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+        });
+    }
+
+    // Auto-migración en caso de hash residual de la versión inicial
+    if (localStorage.getItem(PASS_HASH_KEY) === 'daf3f58a971974790a943e8bbf216ada8ba72062e4eeee5540e15fa5a6d1076e') {
+        localStorage.setItem(PASS_HASH_KEY, DEFAULT_PASS_HASH);
+    }
+    if (!localStorage.getItem(EMAIL_HASH_KEY)) {
+        localStorage.setItem(EMAIL_HASH_KEY, DEFAULT_EMAIL_HASH);
+    }
 
     // Verificar si está en período de bloqueo
     function checkLockout() {
@@ -209,6 +234,7 @@ function initAuth() {
         sessionStorage.setItem('vipbarbers_login_time', Date.now().toString());
     } else {
         sessionStorage.removeItem('vipbarbers_admin_logged');
+        sessionStorage.removeItem('vipbarbers_admin_user');
         sessionStorage.removeItem('vipbarbers_login_time');
     }
 
@@ -217,22 +243,28 @@ function initAuth() {
             e.preventDefault();
             if (checkLockout()) return;
 
-            const inputPass = loginPassword.value;
-            const inputHash = await computeSHA256(inputPass);
-            const storedHash = localStorage.getItem(PASS_HASH_KEY) || DEFAULT_PASS_HASH;
+            const inputEmail = sanitizeText((loginEmail ? loginEmail.value : '').trim().toLowerCase());
+            const inputPass = loginPassword ? loginPassword.value : '';
 
-            if (inputHash === storedHash) {
+            const inputEmailHash = await computeSHA256(inputEmail);
+            const inputPassHash = await computeSHA256(inputPass);
+
+            const storedEmailHash = localStorage.getItem(EMAIL_HASH_KEY) || DEFAULT_EMAIL_HASH;
+            const storedPassHash = localStorage.getItem(PASS_HASH_KEY) || DEFAULT_PASS_HASH;
+
+            if (inputEmailHash === storedEmailHash && inputPassHash === storedPassHash) {
                 // Éxito: limpiar intentos
                 localStorage.removeItem(ATTEMPTS_KEY);
                 localStorage.removeItem(LOCKOUT_KEY);
                 sessionStorage.setItem('vipbarbers_admin_logged', 'true');
+                sessionStorage.setItem('vipbarbers_admin_user', inputEmail);
                 sessionStorage.setItem('vipbarbers_login_time', Date.now().toString());
                 loginScreen.style.display = 'none';
                 if (loginError) loginError.style.display = 'none';
-                loginPassword.value = '';
+                if (loginPassword) loginPassword.value = '';
                 showToast('¡Sesión iniciada con éxito!');
             } else {
-                // Fallo: registrar intento
+                // Fallo: registrar intento fallido
                 let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
                 localStorage.setItem(ATTEMPTS_KEY, attempts.toString());
 
@@ -243,12 +275,14 @@ function initAuth() {
                 } else {
                     const left = MAX_ATTEMPTS - attempts;
                     if (loginErrorMsg) {
-                        loginErrorMsg.textContent = `Contraseña incorrecta. Te quedan ${left} intento(s) antes del bloqueo temporal.`;
+                        loginErrorMsg.textContent = `Correo o contraseña incorrectos. Te quedan ${left} intento(s) antes del bloqueo temporal.`;
                     }
                     if (loginError) loginError.style.display = 'block';
                 }
-                loginPassword.value = '';
-                loginPassword.focus();
+                if (loginPassword) {
+                    loginPassword.value = '';
+                    loginPassword.focus();
+                }
             }
         });
     }
@@ -256,6 +290,7 @@ function initAuth() {
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
             sessionStorage.removeItem('vipbarbers_admin_logged');
+            sessionStorage.removeItem('vipbarbers_admin_user');
             sessionStorage.removeItem('vipbarbers_login_time');
             location.reload();
         });
@@ -718,10 +753,11 @@ function initBackupHandlers() {
         });
     }
 
-    // Cambio Seguro de Contraseña (Validando Hash SHA-256)
+    // Cambio Seguro de Credenciales (Validando Hash SHA-256)
     if (formPass) {
         formPass.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const emailInput = document.getElementById('emailNuevo');
             const current = document.getElementById('passActual').value;
             const newPass = document.getElementById('passNueva').value;
             const confirmPass = document.getElementById('passConfirm').value;
@@ -734,20 +770,32 @@ function initBackupHandlers() {
                 return;
             }
 
-            if (newPass.length < 6) {
-                alert('Por seguridad, la nueva contraseña debe tener al menos 6 caracteres.');
-                return;
+            let msg = '';
+            // Si proporcionó nuevo correo
+            if (emailInput && emailInput.value.trim()) {
+                const newEmail = sanitizeText(emailInput.value.trim().toLowerCase());
+                const newEmailHash = await computeSHA256(newEmail);
+                localStorage.setItem(EMAIL_HASH_KEY, newEmailHash);
+                msg = 'Correo actualizado.';
             }
 
-            if (newPass !== confirmPass) {
-                alert('Las contraseñas no coinciden.');
-                return;
+            // Si proporcionó nueva contraseña
+            if (newPass) {
+                if (newPass.length < 6) {
+                    alert('Por seguridad, la nueva contraseña debe tener al menos 6 caracteres.');
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    alert('Las contraseñas no coinciden.');
+                    return;
+                }
+                const newHash = await computeSHA256(newPass);
+                localStorage.setItem(PASS_HASH_KEY, newHash);
+                msg += (msg ? ' Y contraseña' : 'Contraseña') + ' actualizada de forma segura (cifrada con SHA-256).';
             }
 
-            const newHash = await computeSHA256(newPass);
-            localStorage.setItem(PASS_HASH_KEY, newHash);
             formPass.reset();
-            showToast('¡Contraseña actualizada de forma segura (cifrada con SHA-256)!');
+            showToast(msg || 'Credenciales validadas con éxito.');
         });
     }
 }

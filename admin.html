@@ -29,7 +29,7 @@
             <p>Acceso Seguro al Panel de Administración</p>
 
             <div class="login-error" id="loginError">
-                <i class="fa-solid fa-triangle-exclamation"></i> <span id="loginErrorMsg">Contraseña incorrecta. Por favor intenta de nuevo.</span>
+                <i class="fa-solid fa-triangle-exclamation"></i> <span id="loginErrorMsg">Correo o contraseña incorrectos.</span>
             </div>
 
             <div class="login-error" id="loginLockout" style="background: rgba(230, 57, 70, 0.25); border-color: #E63946; color: #FFA69E;">
@@ -37,9 +37,19 @@
             </div>
 
             <form id="loginForm">
+                <div class="form-group-admin" style="text-align: left; margin-bottom: 1.25rem;">
+                    <label class="form-label-admin"><i class="fa-regular fa-envelope"></i> Correo Electrónico</label>
+                    <input type="email" id="loginEmail" class="form-input-admin" placeholder="admin@vipbarbersclub.space" required autofocus autocomplete="username">
+                </div>
+
                 <div class="form-group-admin" style="text-align: left; margin-bottom: 1.5rem;">
-                    <label class="form-label-admin">Contraseña de Administrador</label>
-                    <input type="password" id="loginPassword" class="form-input-admin" placeholder="••••••••" required autofocus autocomplete="current-password">
+                    <label class="form-label-admin"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <div style="position: relative;">
+                        <input type="password" id="loginPassword" class="form-input-admin" placeholder="••••••••" required autocomplete="current-password" style="padding-right: 2.75rem;">
+                        <button type="button" id="togglePasswordVisibility" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #888; cursor: pointer; font-size: 1rem; padding: 4px;" aria-label="Mostrar u ocultar contraseña">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-admin btn-admin-gold" style="width: 100%; padding: 0.95rem;">
@@ -334,23 +344,27 @@
 
                     <div class="card-admin">
                         <div class="card-admin-header">
-                            <h2 class="card-admin-title"><i class="fa-solid fa-key"></i> Cambiar Contraseña del Administrador</h2>
+                            <h2 class="card-admin-title"><i class="fa-solid fa-key"></i> Cambiar Credenciales de Acceso (Correo y Contraseña)</h2>
                         </div>
                         <form id="formChangePass" style="max-width: 500px;">
                             <div class="form-group-admin">
-                                <label class="form-label-admin">Contraseña Actual</label>
+                                <label class="form-label-admin">Nuevo Correo de Acceso (Opcional)</label>
+                                <input type="email" id="emailNuevo" class="form-input-admin" placeholder="admin@vipbarbersclub.space">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Contraseña Actual * (Requerida para confirmar cambios)</label>
                                 <input type="password" id="passActual" class="form-input-admin" required>
                             </div>
                             <div class="form-group-admin">
-                                <label class="form-label-admin">Nueva Contraseña</label>
-                                <input type="password" id="passNueva" class="form-input-admin" required minlength="4">
+                                <label class="form-label-admin">Nueva Contraseña (Opcional si solo cambias correo)</label>
+                                <input type="password" id="passNueva" class="form-input-admin" minlength="6" placeholder="Mínimo 6 caracteres">
                             </div>
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Confirmar Nueva Contraseña</label>
-                                <input type="password" id="passConfirm" class="form-input-admin" required minlength="4">
+                                <input type="password" id="passConfirm" class="form-input-admin" minlength="6" placeholder="Repite la nueva contraseña">
                             </div>
                             <button type="submit" class="btn-admin btn-admin-gold">
-                                <i class="fa-solid fa-check"></i> Actualizar Contraseña
+                                <i class="fa-solid fa-check"></i> Actualizar Credenciales
                             </button>
                         </form>
                     </div>
