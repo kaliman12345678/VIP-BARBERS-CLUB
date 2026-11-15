@@ -70,6 +70,18 @@ const DEFAULT_SITE_DATA = {
         facebook: "https://www.facebook.com/share/18VDVCjF9Z/?mibextid=wwXIfr",
         whatsapp: "https://wa.me/573043059911"
     },
+    buttons: {
+        navReserveText: "Reservar Cita",
+        navReserveUrl: "#contacto",
+        heroPrimaryText: "Agendar Mi Cita VIP",
+        heroPrimaryUrl: "#contacto",
+        heroSecondaryText: "Ver Catálogo de Servicios",
+        heroSecondaryUrl: "#servicios",
+        whatsappFloatUrl: "https://wa.me/573043059911?text=Hola%20VIP%20Barbers%20Club,%20deseo%20agendar%20una%20cita%20exclusiva...",
+        ritualReserveUrl: "#contacto",
+        servicesReserveUrl: "",
+        mapsDirectionUrl: "https://www.google.com/maps/dir/?api=1&destination=Transversal+39B+%2372-101%2C+Av+Nutibara%2C+Medellin%2C+Antioquia"
+    },
     services: [
         {
             id: 1,
@@ -318,6 +330,9 @@ function loadSiteData() {
                 siteData.business.postalCode = '050031';
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(siteData));
             }
+            if (!siteData.buttons) {
+                siteData.buttons = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA.buttons));
+            }
         } catch (e) {
             console.error('Error parseando datos:', e);
             siteData = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
@@ -400,6 +415,19 @@ function populateAllForms() {
     setVal('heroDesc', siteData.hero.description);
     setVal('heroBgMedia', siteData.hero.bgMedia);
     setVal('heroBgType', siteData.hero.bgMediaType || 'image');
+
+    if (siteData.buttons) {
+        setVal('btnNavReserveText', siteData.buttons.navReserveText || 'Reservar Cita');
+        setVal('btnNavReserveUrl', siteData.buttons.navReserveUrl || '#contacto');
+        setVal('btnHeroPrimaryText', siteData.buttons.heroPrimaryText || 'Agendar Mi Cita VIP');
+        setVal('btnHeroPrimaryUrl', siteData.buttons.heroPrimaryUrl || '#contacto');
+        setVal('btnHeroSecondaryText', siteData.buttons.heroSecondaryText || 'Ver Catálogo de Servicios');
+        setVal('btnHeroSecondaryUrl', siteData.buttons.heroSecondaryUrl || '#servicios');
+        setVal('btnWhatsappFloatUrl', siteData.buttons.whatsappFloatUrl || 'https://wa.me/573043059911?text=Hola%20VIP%20Barbers%20Club,%20deseo%20agendar%20una%20cita%20exclusiva...');
+        setVal('btnRitualReserveUrl', siteData.buttons.ritualReserveUrl || '#contacto');
+        setVal('btnServicesReserveUrl', siteData.buttons.servicesReserveUrl || '');
+        setVal('btnMapsDirectionUrl', siteData.buttons.mapsDirectionUrl || 'https://www.google.com/maps/dir/?api=1&destination=Transversal+39B+%2372-101%2C+Av+Nutibara%2C+Medellin%2C+Antioquia');
+    }
 }
 
 function setVal(id, value) {
@@ -436,6 +464,18 @@ function gatherFormData() {
     siteData.hero.description = sanitizeText(getVal('heroDesc'));
     siteData.hero.bgMedia = getVal('heroBgMedia');
     siteData.hero.bgMediaType = getVal('heroBgType');
+
+    if (!siteData.buttons) siteData.buttons = {};
+    siteData.buttons.navReserveText = sanitizeText(getVal('btnNavReserveText')) || 'Reservar Cita';
+    siteData.buttons.navReserveUrl = getVal('btnNavReserveUrl') || '#contacto';
+    siteData.buttons.heroPrimaryText = sanitizeText(getVal('btnHeroPrimaryText')) || 'Agendar Mi Cita VIP';
+    siteData.buttons.heroPrimaryUrl = getVal('btnHeroPrimaryUrl') || '#contacto';
+    siteData.buttons.heroSecondaryText = sanitizeText(getVal('btnHeroSecondaryText')) || 'Ver Catálogo de Servicios';
+    siteData.buttons.heroSecondaryUrl = getVal('btnHeroSecondaryUrl') || '#servicios';
+    siteData.buttons.whatsappFloatUrl = getVal('btnWhatsappFloatUrl') || 'https://wa.me/573043059911?text=Hola%20VIP%20Barbers%20Club,%20deseo%20agendar%20una%20cita%20exclusiva...';
+    siteData.buttons.ritualReserveUrl = getVal('btnRitualReserveUrl') || '#contacto';
+    siteData.buttons.servicesReserveUrl = getVal('btnServicesReserveUrl');
+    siteData.buttons.mapsDirectionUrl = getVal('btnMapsDirectionUrl') || 'https://www.google.com/maps/dir/?api=1&destination=Transversal+39B+%2372-101%2C+Av+Nutibara%2C+Medellin%2C+Antioquia';
 }
 
 // 6. Gestión de Servicios

@@ -419,6 +419,101 @@ function applyAdminSiteData() {
                 document.querySelectorAll('.floating-whatsapp').forEach(a => a.href = data.socials.whatsapp);
             }
         }
+
+        // e) Direccionamiento y Personalización de Todos los Botones
+        if (data.buttons) {
+            function configureButton(elements, url, text) {
+                if (!elements) return;
+                const list = (elements instanceof NodeList || Array.isArray(elements)) ? elements : [elements];
+                list.forEach(btn => {
+                    if (!btn) return;
+                    if (url) {
+                        btn.setAttribute('href', url);
+                        if (url.startsWith('http://') || url.startsWith('https://')) {
+                            btn.setAttribute('target', '_blank');
+                            btn.setAttribute('rel', 'noopener noreferrer');
+                        } else {
+                            btn.removeAttribute('target');
+                            btn.removeAttribute('rel');
+                        }
+                    }
+                    if (text) {
+                        const span = btn.querySelector('span');
+                        if (span) {
+                            span.textContent = text;
+                        }
+                    }
+                });
+            }
+
+            // 1. Botón "Reservar Cita" (Navbar & Menú Móvil)
+            configureButton(
+                document.querySelectorAll('[data-btn-id="nav-reserve"], .btn-nav-reserve, .nav-cta-btn'),
+                data.buttons.navReserveUrl,
+                data.buttons.navReserveText
+            );
+
+            // 2. Botón Principal del Hero ("Agendar Mi Cita VIP")
+            configureButton(
+                document.querySelectorAll('[data-btn-id="hero-primary"]'),
+                data.buttons.heroPrimaryUrl,
+                data.buttons.heroPrimaryText
+            );
+
+            // 3. Botón Secundario del Hero ("Ver Catálogo")
+            configureButton(
+                document.querySelectorAll('[data-btn-id="hero-secondary"]'),
+                data.buttons.heroSecondaryUrl,
+                data.buttons.heroSecondaryText
+            );
+
+            // 4. Botón de Rituales ("Reservar Este Ritual" y "Vivir Experiencia")
+            if (data.buttons.ritualReserveUrl) {
+                configureButton(
+                    document.querySelectorAll('[data-btn-id="ritual-reserve"], [data-btn-id="experience-reserve"]'),
+                    data.buttons.ritualReserveUrl
+                );
+            }
+
+            // 5. Botón Flotante de WhatsApp y Enlaces Rápidos (wa.link)
+            if (data.buttons.whatsappFloatUrl) {
+                document.querySelectorAll('.floating-whatsapp').forEach(a => {
+                    a.href = data.buttons.whatsappFloatUrl;
+                });
+                document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp.com"], a[href*="wa.link"]').forEach(a => {
+                    if (!a.classList.contains('service-cta-btn') && !a.classList.contains('btn-book-service')) {
+                        a.href = data.buttons.whatsappFloatUrl;
+                    }
+                });
+            }
+
+            // 6. Botón "¿Cómo llegar? / Ver Mapa" (Google Maps)
+            if (data.buttons.mapsDirectionUrl) {
+                configureButton(
+                    document.querySelectorAll('[data-btn-id="maps-direction"], .maps-direction-btn'),
+                    data.buttons.mapsDirectionUrl
+                );
+                document.querySelectorAll('a[href*="maps.google.com/maps/dir"]').forEach(a => {
+                    a.href = data.buttons.mapsDirectionUrl;
+                });
+            }
+
+            // 7. Botones del Catálogo de Servicios
+            if (data.buttons.servicesReserveUrl && (data.buttons.servicesReserveUrl.startsWith('http://') || data.buttons.servicesReserveUrl.startsWith('https://') || data.buttons.servicesReserveUrl.startsWith('#'))) {
+                document.querySelectorAll('.service-cta-btn, .btn-book-service').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (data.buttons.servicesReserveUrl.startsWith('#')) {
+                            const targetEl = document.querySelector(data.buttons.servicesReserveUrl);
+                            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                            window.open(data.buttons.servicesReserveUrl, '_blank', 'noopener,noreferrer');
+                        }
+                    }, { capture: true });
+                });
+            }
+        }
     } catch (e) {
         console.error('Error aplicando datos dinámicos:', e);
     }

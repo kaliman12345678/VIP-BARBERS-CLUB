@@ -79,6 +79,12 @@
                     </button>
                 </li>
                 <li class="menu-item">
+                    <button data-tab="tab-botones">
+                        <i class="fa-solid fa-arrow-pointer"></i>
+                        <span>Direccionamiento de Botones</span>
+                    </button>
+                </li>
+                <li class="menu-item">
                     <button data-tab="tab-servicios">
                         <i class="fa-solid fa-scissors"></i>
                         <span>Gestión de Servicios</span>
@@ -209,6 +215,118 @@
                                 <input type="url" id="socWhatsapp" class="form-input-admin">
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA: DIRECCIONAMIENTO DE BOTONES -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-botones">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-arrow-pointer"></i> Control de Enlaces y Botones de la Página</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">
+                                    Tú decides a dónde redirige cada botón. Puedes colocar enlaces de <strong>WhatsApp (wa.link)</strong>, plataformas de agendamiento externas (como <strong>Fresha</strong> o <strong>Calendly</strong>), o el ancla <code>#contacto</code> para que deslice al formulario del sitio.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 1. Botón Reservar Cita (Navbar y Menú Móvil) -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.05rem; color: var(--admin-gold); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-compass"></i> Botón "Reservar Cita" (Barra de Navegación & Menú Móvil)
+                            </h3>
+                            <p style="font-size: 0.82rem; color: #999; margin-bottom: 1rem;">
+                                Este es el botón dorado que aparece en la parte superior derecha de la web y en el menú móvil.
+                            </p>
+                            <div class="form-grid-2">
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Texto del Botón</label>
+                                    <input type="text" id="btnNavReserveText" class="form-input-admin" placeholder="Reservar Cita">
+                                </div>
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Enlace de Destino (URL externa o #contacto)</label>
+                                    <input type="text" id="btnNavReserveUrl" class="form-input-admin" placeholder="https://wa.link/ejemplo o #contacto">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Botones del Hero (Portada Principal) -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.05rem; color: var(--admin-gold); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-star"></i> Botones de Portada (Hero Principal)
+                            </h3>
+                            <p style="font-size: 0.82rem; color: #999; margin-bottom: 1rem;">
+                                Los dos botones destacados que ve el cliente apenas entra a la página web.
+                            </p>
+                            <div class="form-grid-2">
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Texto Botón Principal (Dorado)</label>
+                                    <input type="text" id="btnHeroPrimaryText" class="form-input-admin" placeholder="Agendar Mi Cita VIP">
+                                </div>
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Enlace Destino Botón Principal</label>
+                                    <input type="text" id="btnHeroPrimaryUrl" class="form-input-admin" placeholder="https://wa.link/ejemplo o #contacto">
+                                </div>
+                            </div>
+                            <div class="form-grid-2" style="margin-top: 1rem;">
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Texto Botón Secundario (Borde Dorado)</label>
+                                    <input type="text" id="btnHeroSecondaryText" class="form-input-admin" placeholder="Ver Catálogo">
+                                </div>
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Enlace Destino Botón Secundario</label>
+                                    <input type="text" id="btnHeroSecondaryUrl" class="form-input-admin" placeholder="#servicios o https://...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Botón Flotante de WhatsApp (wa.link) -->
+                        <div style="background: rgba(37, 211, 102, 0.06); border: 1px solid rgba(37, 211, 102, 0.4); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.05rem; color: #25D366; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-brands fa-whatsapp"></i> Botón Flotante de WhatsApp & Pie de Página (wa.link)
+                            </h3>
+                            <p style="font-size: 0.82rem; color: #BBB; margin-bottom: 1rem;">
+                                Pega aquí tu <strong>wa.link</strong> directo o enlace de WhatsApp personalizado. Este enlace controlará el botón verde flotante y los accesos rápidos a WhatsApp.
+                            </p>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Enlace de WhatsApp / wa.link</label>
+                                <input type="url" id="btnWhatsappFloatUrl" class="form-input-admin" placeholder="https://wa.link/tu-enlace o https://wa.me/573043059911?text=...">
+                            </div>
+                        </div>
+
+                        <!-- 4. Botones de Rituales y Servicios -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.05rem; color: var(--admin-gold); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-scissors"></i> Botones de Rituales y Servicios del Catálogo
+                            </h3>
+                            <p style="font-size: 0.82rem; color: #999; margin-bottom: 1rem;">
+                                Define a dónde van los botones "Reservar Este Ritual" y los botones dentro de cada tarjeta de servicio.
+                            </p>
+                            <div class="form-grid-2">
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Destino Botón "Reservar Este Ritual" (Sección Barba & Spa)</label>
+                                    <input type="text" id="btnRitualReserveUrl" class="form-input-admin" placeholder="https://wa.link/ejemplo o #contacto">
+                                </div>
+                                <div class="form-group-admin">
+                                    <label class="form-label-admin">Destino para Botones "Reservar Servicio" (Catálogo)</label>
+                                    <input type="text" id="btnServicesReserveUrl" class="form-input-admin" placeholder="Dejar vacío para WhatsApp automático o poner link">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Botón "¿Cómo llegar?" (Google Maps) -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem;">
+                            <h3 style="font-size: 1.05rem; color: var(--admin-gold); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-location-dot"></i> Botón "¿Cómo llegar? Abrir ruta en Google Maps"
+                            </h3>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Enlace GPS (Google Maps o Waze)</label>
+                                <input type="url" id="btnMapsDirectionUrl" class="form-input-admin" placeholder="https://www.google.com/maps/dir/?api=1&destination=...">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
