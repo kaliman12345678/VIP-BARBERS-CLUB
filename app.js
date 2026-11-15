@@ -422,14 +422,25 @@ function applyAdminSiteData() {
 
         // e) Direccionamiento y Personalización de Todos los Botones
         if (data.buttons) {
+            function sanitizeUrl(url) {
+                if (typeof url !== 'string') return '';
+                const trimmed = url.trim();
+                if (!trimmed) return '';
+                if (trimmed.startsWith('#')) return trimmed;
+                if (/^(https?:\/\/|tel:|mailto:)/i.test(trimmed)) return trimmed;
+                if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(trimmed)) return 'https://' + trimmed;
+                return '#contacto';
+            }
+
             function configureButton(elements, url, text) {
                 if (!elements) return;
                 const list = (elements instanceof NodeList || Array.isArray(elements)) ? elements : [elements];
                 list.forEach(btn => {
                     if (!btn) return;
                     if (url) {
-                        btn.setAttribute('href', url);
-                        if (url.startsWith('http://') || url.startsWith('https://')) {
+                        const safeUrl = sanitizeUrl(url);
+                        btn.setAttribute('href', safeUrl);
+                        if (safeUrl.startsWith('http://') || safeUrl.startsWith('https://')) {
                             btn.setAttribute('target', '_blank');
                             btn.setAttribute('rel', 'noopener noreferrer');
                         } else {

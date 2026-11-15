@@ -39,6 +39,17 @@ function sanitizeText(str) {
     return str.replace(/[<>]/g, tag => ({ '<': '&lt;', '>': '&gt;' }[tag] || tag));
 }
 
+// Sanitización de URLs contra inyección de protocolos maliciosos (javascript:, data:)
+function sanitizeUrl(url) {
+    if (typeof url !== 'string') return '';
+    const trimmed = url.trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('#')) return trimmed;
+    if (/^(https?:\/\/|tel:|mailto:)/i.test(trimmed)) return trimmed;
+    if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(trimmed)) return 'https://' + trimmed;
+    return '#contacto';
+}
+
 // Datos predeterminados de la barbería
 const DEFAULT_SITE_DATA = {
     business: {
@@ -344,6 +355,11 @@ function loadSiteData() {
 }
 
 function saveSiteData(showNotification = true) {
+    if (showNotification && sessionStorage.getItem('vipbarbers_admin_logged') !== 'true') {
+        alert('Acceso no autorizado. Inicia sesión con tus credenciales.');
+        location.reload();
+        return;
+    }
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(siteData));
         if (showNotification) {
@@ -467,15 +483,15 @@ function gatherFormData() {
 
     if (!siteData.buttons) siteData.buttons = {};
     siteData.buttons.navReserveText = sanitizeText(getVal('btnNavReserveText')) || 'Reservar Cita';
-    siteData.buttons.navReserveUrl = getVal('btnNavReserveUrl') || '#contacto';
+    siteData.buttons.navReserveUrl = sanitizeUrl(getVal('btnNavReserveUrl')) || '#contacto';
     siteData.buttons.heroPrimaryText = sanitizeText(getVal('btnHeroPrimaryText')) || 'Agendar Mi Cita VIP';
-    siteData.buttons.heroPrimaryUrl = getVal('btnHeroPrimaryUrl') || '#contacto';
+    siteData.buttons.heroPrimaryUrl = sanitizeUrl(getVal('btnHeroPrimaryUrl')) || '#contacto';
     siteData.buttons.heroSecondaryText = sanitizeText(getVal('btnHeroSecondaryText')) || 'Ver Catálogo de Servicios';
-    siteData.buttons.heroSecondaryUrl = getVal('btnHeroSecondaryUrl') || '#servicios';
-    siteData.buttons.whatsappFloatUrl = getVal('btnWhatsappFloatUrl') || 'https://wa.me/573043059911?text=Hola%20VIP%20Barbers%20Club,%20deseo%20agendar%20una%20cita%20exclusiva...';
-    siteData.buttons.ritualReserveUrl = getVal('btnRitualReserveUrl') || '#contacto';
-    siteData.buttons.servicesReserveUrl = getVal('btnServicesReserveUrl');
-    siteData.buttons.mapsDirectionUrl = getVal('btnMapsDirectionUrl') || 'https://www.google.com/maps/dir/?api=1&destination=Transversal+39B+%2372-101%2C+Av+Nutibara%2C+Medellin%2C+Antioquia';
+    siteData.buttons.heroSecondaryUrl = sanitizeUrl(getVal('btnHeroSecondaryUrl')) || '#servicios';
+    siteData.buttons.whatsappFloatUrl = sanitizeUrl(getVal('btnWhatsappFloatUrl')) || 'https://wa.me/573043059911?text=Hola%20VIP%20Barbers%20Club,%20deseo%20agendar%20una%20cita%20exclusiva...';
+    siteData.buttons.ritualReserveUrl = sanitizeUrl(getVal('btnRitualReserveUrl')) || '#contacto';
+    siteData.buttons.servicesReserveUrl = getVal('btnServicesReserveUrl') ? sanitizeUrl(getVal('btnServicesReserveUrl')) : '';
+    siteData.buttons.mapsDirectionUrl = sanitizeUrl(getVal('btnMapsDirectionUrl')) || 'https://www.google.com/maps/dir/?api=1&destination=Transversal+39B+%2372-101%2C+Av+Nutibara%2C+Medellin%2C+Antioquia';
 }
 
 // 6. Gestión de Servicios
