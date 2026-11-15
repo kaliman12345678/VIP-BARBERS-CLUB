@@ -398,6 +398,13 @@ function applyAdminSiteData() {
                     addressEl.textContent = data.business.address;
                 }
             }
+
+            // Código Postal
+            if (data.business.postalCode) {
+                document.querySelectorAll('.postal-code-val').forEach(el => {
+                    el.textContent = data.business.postalCode;
+                });
+            }
         }
 
         // Redes Sociales

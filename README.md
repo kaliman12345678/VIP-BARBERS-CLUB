@@ -52,7 +52,7 @@ El sitio cuenta con un potente **Panel de Control y Gestión** en negro y dorado
 * **Razón Social:** Vip Barbers Club
 * **NIT:** 1152218409-9
 * **Sede Principal:** Transversal 39B #72-101 segundo piso Av nutibara, Medellín, Antioquia, Colombia
-* **Código Postal:** 050010
+* **Código Postal:** 050031
 * **Teléfono Comercial:** 3043059911 (+57 304 305 9911)
 * **Correo Oficial:** servicioalcliente@vipbarbersclub.space
 * **Dominio Web:** vipbarbersclub.space

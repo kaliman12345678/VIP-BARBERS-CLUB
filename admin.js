@@ -46,7 +46,7 @@ const DEFAULT_SITE_DATA = {
         website: "vipbarbersclub.space",
         address: "Transversal 39B #72-101 segundo piso Av nutibara",
         city: "MEDELLÍN, ANTIOQUIA, COLOMBIA",
-        postalCode: "050010",
+        postalCode: "050031",
         hoursWeek: "Lun - Sáb: 9:00 a.m. - 8:00 p.m. (Jornada Continua)",
         hoursWeekend: "Domingos y Festivos: 10:00 a.m. a 4:00 p.m. (Bajo reserva previa)"
     },
@@ -279,6 +279,10 @@ function loadSiteData() {
     if (saved) {
         try {
             siteData = JSON.parse(saved);
+            if (siteData && siteData.business && siteData.business.postalCode === '050010') {
+                siteData.business.postalCode = '050031';
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(siteData));
+            }
         } catch (e) {
             console.error('Error parseando datos:', e);
             siteData = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
