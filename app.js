@@ -403,38 +403,129 @@ function applyAdminSiteData() {
             }
         }
 
-        // d) Información de Contacto y Redes
+        // d) Información Institucional y Ficha Legal Oficial
         if (data.business) {
-            // Teléfono y WhatsApp
+            // Razón Social
+            if (data.business.name) {
+                document.querySelectorAll('[data-legal="biz-name"]').forEach(el => el.textContent = data.business.name);
+            }
+            // NIT
+            if (data.business.nit) {
+                document.querySelectorAll('[data-legal="biz-nit"]').forEach(el => el.textContent = data.business.nit);
+                document.querySelectorAll('[data-footer="link-nit"] span').forEach(el => el.textContent = `NIT: ${data.business.nit}`);
+            }
+            // Régimen tributario
+            const regimeText = (data.footer && data.footer.legalRegime) ? data.footer.legalRegime : 'DIAN · República de Colombia';
+            document.querySelectorAll('[data-legal="biz-regime"]').forEach(el => el.textContent = regimeText);
+
+            // Domicilio Principal
+            if (data.business.city) {
+                document.querySelectorAll('[data-legal="biz-city"]').forEach(el => el.textContent = data.business.city);
+            }
+            // Dirección del Establecimiento
+            if (data.business.address) {
+                document.querySelectorAll('[data-legal="biz-address"]').forEach(el => el.textContent = data.business.address);
+                const addressEl = document.querySelector('.contact-card-item span');
+                if (addressEl) {
+                    addressEl.textContent = data.business.address;
+                }
+            }
+            // Código Postal
+            if (data.business.postalCode) {
+                document.querySelectorAll('.postal-code-val, [data-legal="biz-postal"]').forEach(el => {
+                    el.textContent = data.business.postalCode;
+                });
+            }
+            // Teléfono
             if (data.business.phone) {
+                document.querySelectorAll('[data-legal="biz-phone"]').forEach(link => {
+                    link.href = `tel:${data.business.phone}`;
+                    link.textContent = data.business.phone;
+                });
                 const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
                 phoneLinks.forEach(link => {
                     link.href = `tel:${data.business.phone}`;
                     link.textContent = data.business.phone;
                 });
             }
-
             // Correo
             if (data.business.email) {
+                document.querySelectorAll('[data-legal="biz-email"]').forEach(link => {
+                    link.href = `mailto:${data.business.email}`;
+                    link.textContent = data.business.email;
+                });
                 const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
                 emailLinks.forEach(link => {
                     link.href = `mailto:${data.business.email}`;
                     link.textContent = data.business.email;
                 });
             }
+            // Dominio / Web
+            if (data.business.website) {
+                document.querySelectorAll('[data-legal="biz-website"]').forEach(el => el.textContent = data.business.website);
+            }
+        }
 
-            // Dirección
-            if (data.business.address) {
-                const addressEl = document.querySelector('.contact-card-item span');
-                if (addressEl) {
-                    addressEl.textContent = data.business.address;
+        // e) Pie de Página (Footer) Completo
+        if (data.footer || data.business) {
+            // Descripción de Marca en el Footer
+            if (data.footer && data.footer.description) {
+                document.querySelectorAll('[data-footer="brand-desc"]').forEach(p => p.textContent = data.footer.description);
+            }
+
+            // Insignia Legal del Footer
+            const badgeText = (data.footer && data.footer.badge) 
+                ? data.footer.badge 
+                : `Razón Social: ${(data.business && data.business.name) || 'Vip Barbers Club'} · NIT: ${(data.business && data.business.nit) || '1152218409-9'}`;
+            document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
+                b.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badgeText}`;
+            });
+
+            // Contacto del Footer (Dirección, Teléfono, Correo, Web)
+            if (data.business) {
+                const fullAddressText = `${data.business.address || 'Transversal 39B #72-101 segundo piso Av nutibara'}, ${data.business.city || 'Medellín, Antioquia'} (C.P. ${data.business.postalCode || '050031'})`;
+                document.querySelectorAll('[data-footer="contact-address"]').forEach(el => el.textContent = fullAddressText);
+
+                if (data.business.phone) {
+                    document.querySelectorAll('[data-footer="contact-phone"]').forEach(a => {
+                        a.href = `tel:${data.business.phone}`;
+                        a.textContent = data.business.phone;
+                    });
+                }
+                if (data.business.email) {
+                    document.querySelectorAll('[data-footer="contact-email"]').forEach(a => {
+                        a.href = `mailto:${data.business.email}`;
+                        a.textContent = data.business.email;
+                    });
+                }
+                if (data.business.website) {
+                    document.querySelectorAll('[data-footer="contact-website"]').forEach(span => {
+                        span.textContent = data.business.website;
+                    });
                 }
             }
 
-            // Código Postal
-            if (data.business.postalCode) {
-                document.querySelectorAll('.postal-code-val').forEach(el => {
-                    el.textContent = data.business.postalCode;
+            // Leyenda de Derechos Reservados / Copyright en la barra inferior
+            if (data.footer && data.footer.copyright) {
+                document.querySelectorAll('[data-footer="copyright-text"]').forEach(el => {
+                    el.innerHTML = data.footer.copyright;
+                });
+            } else if (data.business) {
+                const defaultCopyright = `&copy; 2026 <strong>${data.business.name || 'Vip Barbers Club'}</strong> (NIT: ${data.business.nit || '1152218409-9'}). ${data.business.address || 'Transversal 39B #72-101 segundo piso Av nutibara'}, ${data.business.city || 'Medellín, Antioquia, Colombia'}. Todos los derechos reservados.`;
+                document.querySelectorAll('[data-footer="copyright-text"]').forEach(el => {
+                    el.innerHTML = defaultCopyright;
+                });
+            }
+
+            // Enlaces legales del footer
+            if (data.footer && data.footer.privacyUrl) {
+                document.querySelectorAll('[data-footer="link-privacidad"], [data-footer="bottom-privacidad"]').forEach(a => {
+                    a.href = data.footer.privacyUrl;
+                });
+            }
+            if (data.footer && data.footer.termsUrl) {
+                document.querySelectorAll('[data-footer="link-terminos"], [data-footer="bottom-terminos"]').forEach(a => {
+                    a.href = data.footer.termsUrl;
                 });
             }
         }

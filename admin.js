@@ -185,7 +185,15 @@ const DEFAULT_SITE_DATA = {
             title: "Masaje Craneal & Lavado",
             subtitle: "Desconexión y bienestar en cada visita"
         }
-    ]
+    ],
+    footer: {
+        description: "«Más que un corte, una experiencia. En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle. Porque verte bien no es un lujo, es parte de quién eres.»",
+        badge: "Razón Social: Vip Barbers Club · NIT: 1152218409-9",
+        copyright: "© 2026 Vip Barbers Club (NIT: 1152218409-9). Transversal 39B #72-101 segundo piso Av nutibara, Medellín, Antioquia, Colombia. Todos los derechos reservados.",
+        legalRegime: "DIAN · República de Colombia",
+        privacyUrl: "politica-de-privacidad.html",
+        termsUrl: "terminos-y-condiciones.html"
+    }
 };
 
 // Estado global de la aplicación
@@ -204,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMediaUploadHandlers();
     initBackupHandlers();
     initSessionTimeoutTracker();
+    initFooterLiveSync();
 });
 
 // 2. Autenticación con Protección Contra Fuerza Bruta y Hashing SHA-256
@@ -367,6 +376,19 @@ function loadSiteData() {
             if (!Array.isArray(siteData.hero.banners) || siteData.hero.banners.length === 0) {
                 siteData.hero.banners = JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
             }
+            if (!siteData.footer) {
+                siteData.footer = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA.footer));
+            } else {
+                if (!siteData.footer.description) siteData.footer.description = DEFAULT_SITE_DATA.footer.description;
+                if (!siteData.footer.badge) siteData.footer.badge = `Razón Social: ${siteData.business.name || 'Vip Barbers Club'} · NIT: ${siteData.business.nit || '1152218409-9'}`;
+                if (!siteData.footer.copyright) siteData.footer.copyright = DEFAULT_SITE_DATA.footer.copyright;
+                if (!siteData.footer.legalRegime) siteData.footer.legalRegime = DEFAULT_SITE_DATA.footer.legalRegime;
+                if (!siteData.footer.privacyUrl) siteData.footer.privacyUrl = 'politica-de-privacidad.html';
+                if (!siteData.footer.termsUrl) siteData.footer.termsUrl = 'terminos-y-condiciones.html';
+            }
+            if (!siteData.business.website) {
+                siteData.business.website = 'vipbarbersclub.space';
+            }
         } catch (e) {
             console.error('Error parseando datos:', e);
             siteData = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
@@ -440,8 +462,29 @@ function populateAllForms() {
     setVal('bizAddress', siteData.business.address);
     setVal('bizCity', siteData.business.city);
     setVal('bizPostal', siteData.business.postalCode);
+    setVal('bizWebsite', siteData.business.website || 'vipbarbersclub.space');
     setVal('bizHoursWeek', siteData.business.hoursWeek);
     setVal('bizHoursWeekend', siteData.business.hoursWeekend);
+
+    if (siteData.footer) {
+        setVal('footerDesc', siteData.footer.description || DEFAULT_SITE_DATA.footer.description);
+        setVal('footerLegalBadge', siteData.footer.badge || `Razón Social: ${siteData.business.name} · NIT: ${siteData.business.nit}`);
+        setVal('footerCopyright', siteData.footer.copyright || DEFAULT_SITE_DATA.footer.copyright);
+        setVal('footerPrivacyUrl', siteData.footer.privacyUrl || 'politica-de-privacidad.html');
+        setVal('footerTermsUrl', siteData.footer.termsUrl || 'terminos-y-condiciones.html');
+        setVal('legalRegime', siteData.footer.legalRegime || 'DIAN · República de Colombia');
+    }
+
+    setVal('legalBizName', siteData.business.name);
+    setVal('legalBizNit', siteData.business.nit);
+    setVal('legalBizCity', siteData.business.city);
+    setVal('legalBizAddress', siteData.business.address);
+    setVal('legalBizPostal', siteData.business.postalCode);
+    setVal('legalBizPhone', siteData.business.phone);
+    setVal('legalBizEmail', siteData.business.email);
+    setVal('legalBizWebsite', siteData.business.website || 'vipbarbersclub.space');
+
+    updateFooterLivePreview();
 
     setVal('socInstagram', siteData.socials.instagram);
     setVal('socFacebook', siteData.socials.facebook);
@@ -499,15 +542,33 @@ function getVal(id) {
 }
 
 function gatherFormData() {
-    siteData.business.name = sanitizeText(getVal('bizName'));
-    siteData.business.nit = sanitizeText(getVal('bizNit'));
-    siteData.business.phone = sanitizeText(getVal('bizPhone'));
-    siteData.business.email = sanitizeText(getVal('bizEmail'));
-    siteData.business.address = sanitizeText(getVal('bizAddress'));
-    siteData.business.city = sanitizeText(getVal('bizCity'));
-    siteData.business.postalCode = sanitizeText(getVal('bizPostal'));
+    const bName = sanitizeText(getVal('legalBizName') || getVal('bizName'));
+    const bNit = sanitizeText(getVal('legalBizNit') || getVal('bizNit'));
+    const bPhone = sanitizeText(getVal('legalBizPhone') || getVal('bizPhone'));
+    const bEmail = sanitizeText(getVal('legalBizEmail') || getVal('bizEmail'));
+    const bAddress = sanitizeText(getVal('legalBizAddress') || getVal('bizAddress'));
+    const bCity = sanitizeText(getVal('legalBizCity') || getVal('bizCity'));
+    const bPostal = sanitizeText(getVal('legalBizPostal') || getVal('bizPostal'));
+    const bWebsite = sanitizeText(getVal('legalBizWebsite') || getVal('bizWebsite')) || 'vipbarbersclub.space';
+
+    siteData.business.name = bName;
+    siteData.business.nit = bNit;
+    siteData.business.phone = bPhone;
+    siteData.business.email = bEmail;
+    siteData.business.address = bAddress;
+    siteData.business.city = bCity;
+    siteData.business.postalCode = bPostal;
+    siteData.business.website = bWebsite;
     siteData.business.hoursWeek = sanitizeText(getVal('bizHoursWeek'));
     siteData.business.hoursWeekend = sanitizeText(getVal('bizHoursWeekend'));
+
+    if (!siteData.footer) siteData.footer = {};
+    siteData.footer.description = getVal('footerDesc') || DEFAULT_SITE_DATA.footer.description;
+    siteData.footer.badge = getVal('footerLegalBadge') || `Razón Social: ${bName} · NIT: ${bNit}`;
+    siteData.footer.copyright = getVal('footerCopyright') || DEFAULT_SITE_DATA.footer.copyright;
+    siteData.footer.legalRegime = getVal('legalRegime') || 'DIAN · República de Colombia';
+    siteData.footer.privacyUrl = getVal('footerPrivacyUrl') || 'politica-de-privacidad.html';
+    siteData.footer.termsUrl = getVal('footerTermsUrl') || 'terminos-y-condiciones.html';
 
     siteData.socials.instagram = getVal('socInstagram');
     siteData.socials.facebook = getVal('socFacebook');
@@ -1241,6 +1302,62 @@ function initBannerController() {
                 }
                 updateHeroLivePreview();
             });
+        }
+    });
+}
+
+
+// ==========================================================================
+// 10. CONTROLADOR DEL PIE DE PÁGINA & INFORMACIÓN LEGAL (LIVE PREVIEW & SYNC)
+// ==========================================================================
+function updateFooterLivePreview() {
+    const desc = getVal('footerDesc') || (siteData && siteData.footer ? siteData.footer.description : '') || '«Más que un corte, una experiencia. En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle. Porque verte bien no es un lujo, es parte de quién eres.»';
+    const bName = getVal('legalBizName') || getVal('bizName') || (siteData && siteData.business ? siteData.business.name : 'Vip Barbers Club');
+    const bNit = getVal('legalBizNit') || getVal('bizNit') || (siteData && siteData.business ? siteData.business.nit : '1152218409-9');
+    const badge = getVal('footerLegalBadge') || `Razón Social: ${bName} · NIT: ${bNit}`;
+    const copy = getVal('footerCopyright') || `© 2026 ${bName} (NIT: ${bNit}). Transversal 39B #72-101 segundo piso Av nutibara, Medellín, Antioquia, Colombia. Todos los derechos reservados.`;
+
+    const prevDesc = document.getElementById('prevFooterDesc');
+    const prevBadge = document.getElementById('prevFooterBadge');
+    const prevCopy = document.getElementById('prevFooterCopyright');
+
+    if (prevDesc) prevDesc.textContent = desc;
+    if (prevBadge) prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badge}`;
+    if (prevCopy) prevCopy.textContent = copy;
+}
+
+function initFooterLiveSync() {
+    const syncPairs = [
+        ['bizName', 'legalBizName'],
+        ['bizNit', 'legalBizNit'],
+        ['bizCity', 'legalBizCity'],
+        ['bizAddress', 'legalBizAddress'],
+        ['bizPostal', 'legalBizPostal'],
+        ['bizPhone', 'legalBizPhone'],
+        ['bizEmail', 'legalBizEmail'],
+        ['bizWebsite', 'legalBizWebsite']
+    ];
+
+    syncPairs.forEach(([f1, f2]) => {
+        const el1 = document.getElementById(f1);
+        const el2 = document.getElementById(f2);
+        if (el1 && el2) {
+            el1.addEventListener('input', () => {
+                el2.value = el1.value;
+                updateFooterLivePreview();
+            });
+            el2.addEventListener('input', () => {
+                el1.value = el2.value;
+                updateFooterLivePreview();
+            });
+        }
+    });
+
+    ['footerDesc', 'footerLegalBadge', 'footerCopyright', 'legalRegime', 'footerPrivacyUrl', 'footerTermsUrl'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateFooterLivePreview);
+            el.addEventListener('change', updateFooterLivePreview);
         }
     });
 }
