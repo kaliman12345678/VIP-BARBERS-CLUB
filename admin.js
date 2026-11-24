@@ -51,6 +51,14 @@ function sanitizeUrl(url) {
 }
 
 // Datos predeterminados de la barbería
+const DEFAULT_BANNER_PRESETS = [
+    { id: 'b1', name: 'Interior Barbershop', desc: 'Sillones & estilo clásico', src: 'hero-vip-barbershop.jpg', type: 'image' },
+    { id: 'b2', name: 'Técnica de Precisión', desc: 'Navaja & barbero pro', src: 'corte-precision-barbero.jpg', type: 'image' },
+    { id: 'b3', name: 'Ritual Vapor Ozono', desc: 'Spa facial masculino', src: 'vapor-ozono-ritual.jpg', type: 'image' },
+    { id: 'b4', name: 'Lavado & Masaje', desc: 'Relax & descanso capilar', src: 'lavado-masaje-capilar.jpg', type: 'image' },
+    { id: 'b5', name: 'Corte Fade VIP', desc: 'Perfilado magistral', src: 'trabajo-corte-precision.jpg', type: 'image' }
+];
+
 const DEFAULT_SITE_DATA = {
     business: {
         name: "Vip Barbers Club",
@@ -75,7 +83,8 @@ const DEFAULT_SITE_DATA = {
         description: "Encontramos el estilo que mejor se adapta a tu rostro, cabello y personalidad, mientras disfrutas de una experiencia integral de bienestar que incluye vapor de ozono, lavado capilar y masaje descontracturante. Porque sabemos que verte bien no es un lujo, es parte de quién eres.",
         bgMedia: "hero-vip-barbershop.jpg",
         bgMediaType: "image",
-        overlayOpacity: 88
+        overlayOpacity: 88,
+        banners: DEFAULT_BANNER_PRESETS
     },
     theme: "gold-classic",
     socials: {
@@ -355,6 +364,9 @@ function loadSiteData() {
             if (siteData.hero.overlayOpacity === undefined) {
                 siteData.hero.overlayOpacity = 88;
             }
+            if (!Array.isArray(siteData.hero.banners) || siteData.hero.banners.length === 0) {
+                siteData.hero.banners = JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
+            }
         } catch (e) {
             console.error('Error parseando datos:', e);
             siteData = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
@@ -453,7 +465,8 @@ function populateAllForms() {
         updateActiveThemeCard(siteData.theme);
     }
 
-    // Seleccionar banner activo en los presets
+    // Renderizar galería de banners dinámicos y activar seleccionado
+    renderPresetBanners();
     updateActivePresetBanner(siteData.hero.bgMedia);
 
     // Actualizar previsualización en vivo
@@ -508,6 +521,7 @@ function gatherFormData() {
     siteData.hero.bgMedia = getVal('heroBgMedia');
     siteData.hero.bgMediaType = getVal('heroBgType');
     siteData.hero.overlayOpacity = parseInt(getVal('heroOverlayOpacity') || '88');
+    siteData.hero.banners = (siteData.hero && Array.isArray(siteData.hero.banners)) ? siteData.hero.banners : JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
     siteData.theme = siteData.theme || 'gold-classic';
 
     if (!siteData.buttons) siteData.buttons = {};
@@ -943,8 +957,111 @@ function initThemesController() {
 }
 
 // ==========================================================================
-// 9. CONTROLADOR DEL BANNER PRINCIPAL DE PORTADA & LIVE PREVIEW
+// 9. CONTROLADOR DEL BANNER PRINCIPAL DE PORTADA & LIVE PREVIEW (ELIMINAR Y AGREGAR A PLACER)
 // ==========================================================================
+function renderPresetBanners() {
+    const grid = document.getElementById('presetBannersGrid');
+    if (!grid) return;
+
+    if (!siteData.hero) siteData.hero = {};
+    if (!Array.isArray(siteData.hero.banners)) {
+        siteData.hero.banners = JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
+    }
+
+    const currentMedia = getVal('heroBgMedia') || siteData.hero.bgMedia || '';
+
+    if (siteData.hero.banners.length === 0) {
+        grid.innerHTML = `
+            <div class="preset-banners-empty">
+                <i class="fa-regular fa-images"></i>
+                <p style="margin: 0 0 0.5rem; font-weight: 600; color: #ccc;">No hay fotos en la galería de portada</p>
+                <p style="margin: 0; font-size: 0.8rem; color: #777;">Sube una foto personalizada o haz clic en "Restaurar Fotos Prediseñadas".</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = siteData.hero.banners.map((b) => {
+        const isActive = (b.src === currentMedia);
+        return `
+            <div class="preset-banner-card ${isActive ? 'active' : ''}" data-id="${b.id}" data-src="${b.src}" data-type="${b.type || 'image'}">
+                <span class="preset-banner-active-badge"><i class="fa-solid fa-check"></i> Activo</span>
+                <button type="button" class="btn-delete-banner-card" title="Eliminar foto del banner" data-delete-id="${b.id}">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <img src="${b.src}" alt="${b.name}">
+                <div class="preset-banner-info">
+                    <strong>${b.name}</strong>
+                    <span>${b.desc || ''}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Eventos de selección de tarjeta
+    grid.querySelectorAll('.preset-banner-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-delete-banner-card')) return;
+            const src = card.getAttribute('data-src');
+            const type = card.getAttribute('data-type') || 'image';
+            setVal('heroBgMedia', src);
+            setVal('heroBgType', type);
+            if (siteData.hero) {
+                siteData.hero.bgMedia = src;
+                siteData.hero.bgMediaType = type;
+            }
+            updateActivePresetBanner(src);
+            updateHeroLivePreview();
+            showToast('Banner seleccionado: ' + (card.querySelector('strong') ? card.querySelector('strong').textContent : ''));
+        });
+    });
+
+    // Eventos de eliminación directa de cada foto
+    grid.querySelectorAll('.btn-delete-banner-card').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const idToDelete = btn.getAttribute('data-delete-id');
+            deleteBannerCard(idToDelete);
+        });
+    });
+}
+
+function deleteBannerCard(id) {
+    if (!siteData.hero || !Array.isArray(siteData.hero.banners)) return;
+
+    const bannerToDelete = siteData.hero.banners.find(b => b.id === id);
+    const bannerName = bannerToDelete ? bannerToDelete.name : 'esta foto';
+
+    if (!confirm(`¿Estás seguro de que deseas eliminar la foto "${bannerName}" de los banners de portada?`)) {
+        return;
+    }
+
+    const currentMedia = getVal('heroBgMedia') || (siteData.hero ? siteData.hero.bgMedia : '');
+    const wasActive = bannerToDelete && (bannerToDelete.src === currentMedia);
+
+    siteData.hero.banners = siteData.hero.banners.filter(b => b.id !== id);
+
+    if (wasActive) {
+        if (siteData.hero.banners.length > 0) {
+            const nextBanner = siteData.hero.banners[0];
+            setVal('heroBgMedia', nextBanner.src);
+            setVal('heroBgType', nextBanner.type || 'image');
+            siteData.hero.bgMedia = nextBanner.src;
+            siteData.hero.bgMediaType = nextBanner.type || 'image';
+        } else {
+            setVal('heroBgMedia', '');
+            siteData.hero.bgMedia = '';
+        }
+        updateHeroLivePreview();
+    }
+
+    // Guardar inmediatamente y refrescar
+    saveSiteData(false);
+    renderPresetBanners();
+    showToast(`Foto eliminada: "${bannerName}"`);
+}
+
 function updateActivePresetBanner(currentSrc) {
     const cards = document.querySelectorAll('.preset-banner-card');
     cards.forEach(card => {
@@ -969,7 +1086,7 @@ function updateHeroLivePreview() {
     const titleVal = getVal('heroTitle') || (siteData && siteData.hero ? siteData.hero.title : 'VIP BARBERS CLUB');
     const quoteVal = getVal('heroQuote') || (siteData && siteData.hero ? siteData.hero.quote : '«Más que un corte, una experiencia»');
     const descVal = getVal('heroDesc') || (siteData && siteData.hero ? siteData.hero.description : 'Encontramos el estilo que mejor se adapta a tu rostro...');
-    const bgMediaVal = getVal('heroBgMedia') || (siteData && siteData.hero ? siteData.hero.bgMedia : 'hero-vip-barbershop.jpg');
+    const bgMediaVal = getVal('heroBgMedia') || (siteData && siteData.hero ? siteData.hero.bgMedia : '');
     const bgTypeVal = getVal('heroBgType') || 'image';
     const opacityVal = opacityInput ? parseInt(opacityInput.value || '88') : 88;
 
@@ -980,7 +1097,15 @@ function updateHeroLivePreview() {
 
     // Actualizar fondo de previsualización
     if (previewLayer) {
-        if (bgTypeVal === 'video') {
+        if (!bgMediaVal) {
+            previewLayer.innerHTML = `
+                <div style="width:100%; height:100%; background: linear-gradient(135deg, #161616 0%, #242424 50%, #161616 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; color:#888; gap:0.5rem;">
+                    <i class="fa-regular fa-image" style="font-size:2rem; color:#666;"></i>
+                    <span style="font-size:0.85rem;">Sin imagen de fondo activa</span>
+                </div>
+                <div class="hero-preview-overlay" id="heroPreviewOverlay"></div>
+            `;
+        } else if (bgTypeVal === 'video') {
             previewLayer.innerHTML = `
                 <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
                     <source src="${bgMediaVal}" type="video/mp4">
@@ -1004,21 +1129,37 @@ function updateHeroLivePreview() {
 }
 
 function initBannerController() {
-    // 1. Galería de Banners Prediseñados
-    const presetCards = document.querySelectorAll('.preset-banner-card');
-    presetCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const src = card.getAttribute('data-src');
-            const type = card.getAttribute('data-type') || 'image';
-            setVal('heroBgMedia', src);
-            setVal('heroBgType', type);
-            updateActivePresetBanner(src);
-            updateHeroLivePreview();
-            showToast('Banner seleccionado: ' + card.querySelector('strong').textContent);
-        });
-    });
+    // 1. Renderizar galería de banners dinámicos
+    renderPresetBanners();
 
-    // 2. Subida de imagen propia con compresión y redimensionamiento automático
+    // 2. Botón restaurar fotos oficiales prediseñadas
+    const btnResetBanners = document.getElementById('btnResetBanners');
+    if (btnResetBanners) {
+        btnResetBanners.addEventListener('click', () => {
+            if (!confirm('¿Deseas restaurar la lista oficial de fotos prediseñadas del banner?')) return;
+            if (!siteData.hero) siteData.hero = {};
+            siteData.hero.banners = JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
+            saveSiteData(false);
+            renderPresetBanners();
+            showToast('Fotos oficiales del banner restauradas');
+        });
+    }
+
+    // 3. Botón quitar fondo actual
+    const btnClearHeroBg = document.getElementById('btnClearHeroBg');
+    if (btnClearHeroBg) {
+        btnClearHeroBg.addEventListener('click', () => {
+            if (!confirm('¿Deseas quitar la imagen de fondo actual del banner?')) return;
+            setVal('heroBgMedia', '');
+            if (siteData.hero) siteData.hero.bgMedia = '';
+            updateActivePresetBanner('');
+            updateHeroLivePreview();
+            saveSiteData(false);
+            showToast('Fondo de portada quitado');
+        });
+    }
+
+    // 4. Subida de imagen propia con compresión y agregado automático a la galería
     const fileInput = document.getElementById('heroBgFileInput');
     const fileNameSpan = document.getElementById('heroFileName');
 
@@ -1033,7 +1174,6 @@ function initBannerController() {
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Redimensionar a max 1280px para máxima optimización y evitar límite de localStorage
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
@@ -1049,13 +1189,31 @@ function initBannerController() {
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Comprimir en JPEG a 0.78 de calidad (excelente nitidez y bajo peso)
                     const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
                     setVal('heroBgMedia', optimizedDataUrl);
                     setVal('heroBgType', 'image');
-                    updateActivePresetBanner('');
+
+                    if (!siteData.hero) siteData.hero = {};
+                    if (!Array.isArray(siteData.hero.banners)) {
+                        siteData.hero.banners = JSON.parse(JSON.stringify(DEFAULT_BANNER_PRESETS));
+                    }
+
+                    const shortName = file.name.length > 18 ? file.name.substring(0, 15) + '...' : file.name;
+                    const newBanner = {
+                        id: 'banner_' + Date.now(),
+                        name: 'Foto Subida (' + shortName + ')',
+                        desc: 'Subida desde tu dispositivo',
+                        src: optimizedDataUrl,
+                        type: 'image'
+                    };
+                    siteData.hero.banners.unshift(newBanner);
+                    siteData.hero.bgMedia = optimizedDataUrl;
+                    siteData.hero.bgMediaType = 'image';
+
+                    saveSiteData(false);
+                    renderPresetBanners();
                     updateHeroLivePreview();
-                    showToast('¡Foto cargada y optimizada con éxito!');
+                    showToast('¡Foto cargada y agregada a tu galería de banners!');
                 };
                 img.src = event.target.result;
             };
@@ -1063,7 +1221,7 @@ function initBannerController() {
         });
     }
 
-    // 3. Slider de opacidad
+    // 5. Slider de opacidad
     const opacitySlider = document.getElementById('heroOverlayOpacity');
     const opacityVal = document.getElementById('overlayOpacityVal');
     if (opacitySlider) {
@@ -1073,12 +1231,16 @@ function initBannerController() {
         });
     }
 
-    // 4. Inputs en tiempo real
+    // 6. Inputs en tiempo real
     ['heroTag', 'heroTitle', 'heroAccent', 'heroQuote', 'heroDesc', 'heroBgMedia', 'heroBgType'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener('input', updateHeroLivePreview);
-            el.addEventListener('change', updateHeroLivePreview);
+            el.addEventListener('input', () => {
+                if (id === 'heroBgMedia') {
+                    updateActivePresetBanner(el.value);
+                }
+                updateHeroLivePreview();
+            });
         }
     });
 }

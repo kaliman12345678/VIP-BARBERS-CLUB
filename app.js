@@ -374,10 +374,15 @@ function applyAdminSiteData() {
                 document.documentElement.style.setProperty('--hero-overlay-opacity', opacVal);
             }
 
-            // Fondo del Hero (imagen o video)
+            // Fondo del Hero (imagen o video, con soporte para borrado a placer)
             const heroBgContainer = document.querySelector('.hero-bg-container');
-            if (heroBgContainer && data.hero.bgMedia) {
-                if (data.hero.bgMediaType === 'video') {
+            if (heroBgContainer) {
+                if (!data.hero.bgMedia) {
+                    heroBgContainer.innerHTML = `
+                        <div class="hero-bg-img" style="background: linear-gradient(135deg, #0b0b0b 0%, #171717 50%, #0b0b0b 100%); width:100%; height:100%;"></div>
+                        <div class="hero-overlay"></div>
+                    `;
+                } else if (data.hero.bgMediaType === 'video') {
                     heroBgContainer.innerHTML = `
                         <video autoplay muted loop playsinline class="hero-bg-img" style="object-fit:cover; width:100%; height:100%;">
                             <source src="${data.hero.bgMedia}" type="video/mp4">
@@ -386,8 +391,13 @@ function applyAdminSiteData() {
                     `;
                 } else {
                     const heroImg = heroBgContainer.querySelector('.hero-bg-img');
-                    if (heroImg) {
+                    if (heroImg && heroImg.tagName && heroImg.tagName.toLowerCase() === 'img') {
                         heroImg.src = data.hero.bgMedia;
+                    } else {
+                        heroBgContainer.innerHTML = `
+                            <img src="${data.hero.bgMedia}" alt="VIP Barbers Club Fondo" class="hero-bg-img">
+                            <div class="hero-overlay"></div>
+                        `;
                     }
                 }
             }

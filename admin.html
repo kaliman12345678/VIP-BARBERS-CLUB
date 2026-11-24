@@ -109,6 +109,12 @@
                     </button>
                 </li>
                 <li class="menu-item">
+                    <button data-tab="tab-footer">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        <span>Pie de Página & Legal</span>
+                    </button>
+                </li>
+                <li class="menu-item">
                     <button data-tab="tab-ajustes">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>Seguridad & Respaldo</span>
@@ -165,7 +171,7 @@
                             </div>
                         </div>
 
-                        <div class="form-grid-2">
+                        <div class="form-grid-3">
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Teléfono Móvil (WhatsApp de Reservas)</label>
                                 <input type="text" id="bizPhone" class="form-input-admin">
@@ -173,6 +179,10 @@
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Correo Electrónico Oficial</label>
                                 <input type="email" id="bizEmail" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Dominio / Portal Web Oficial</label>
+                                <input type="text" id="bizWebsite" class="form-input-admin" placeholder="vipbarbersclub.space">
                             </div>
                         </div>
 
@@ -429,46 +439,22 @@
                             </div>
                         </div>
 
-                        <!-- Galería de Banners Prediseñados VIP -->
-                        <label class="form-label-admin" style="margin-bottom: 0.75rem; display: block;">
-                            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--admin-gold);"></i> Banners Oficiales de la Marca (Selecciona con 1 Clic):
-                        </label>
+                        <!-- Galería de Banners Prediseñados VIP y Fotos del Administrador -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;">
+                            <label class="form-label-admin" style="margin: 0;">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--admin-gold);"></i> Banners Disponibles (Haz clic para activar o usa el cesto <i class="fa-solid fa-trash-can" style="color:#e63946;"></i> para eliminar a placer):
+                            </label>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" id="btnResetBanners" class="btn-admin btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: rgba(212,175,55,0.4); color: var(--admin-gold); cursor: pointer;">
+                                    <i class="fa-solid fa-rotate-left"></i> Restaurar Fotos Prediseñadas
+                                </button>
+                                <button type="button" id="btnClearHeroBg" class="btn-admin btn-admin-danger" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; background: rgba(220,53,69,0.15); border-color: rgba(220,53,69,0.4); color: #ff6b6b; cursor: pointer;">
+                                    <i class="fa-solid fa-trash-can"></i> Quitar Fondo Actual
+                                </button>
+                            </div>
+                        </div>
                         <div class="preset-banners-grid" id="presetBannersGrid">
-                            <div class="preset-banner-card active" data-src="hero-vip-barbershop.jpg" data-type="image">
-                                <img src="hero-vip-barbershop.jpg" alt="Interior Club VIP">
-                                <div class="preset-banner-info">
-                                    <strong>Interior Barbershop</strong>
-                                    <span>Sillones & estilo clásico</span>
-                                </div>
-                            </div>
-                            <div class="preset-banner-card" data-src="corte-precision-barbero.jpg" data-type="image">
-                                <img src="corte-precision-barbero.jpg" alt="Precisión Barbero">
-                                <div class="preset-banner-info">
-                                    <strong>Técnica de Precisión</strong>
-                                    <span>Navaja & barbero pro</span>
-                                </div>
-                            </div>
-                            <div class="preset-banner-card" data-src="vapor-ozono-ritual.jpg" data-type="image">
-                                <img src="vapor-ozono-ritual.jpg" alt="Vapor de Ozono">
-                                <div class="preset-banner-info">
-                                    <strong>Ritual Vapor Ozono</strong>
-                                    <span>Spa facial masculino</span>
-                                </div>
-                            </div>
-                            <div class="preset-banner-card" data-src="lavado-masaje-capilar.jpg" data-type="image">
-                                <img src="lavado-masaje-capilar.jpg" alt="Lavado Capilar">
-                                <div class="preset-banner-info">
-                                    <strong>Lavado & Masaje</strong>
-                                    <span>Relax & descanso capilar</span>
-                                </div>
-                            </div>
-                            <div class="preset-banner-card" data-src="trabajo-corte-precision.jpg" data-type="image">
-                                <img src="trabajo-corte-precision.jpg" alt="Corte Desvanecido">
-                                <div class="preset-banner-info">
-                                    <strong>Corte Fade VIP</strong>
-                                    <span>Perfilado magistral</span>
-                                </div>
-                            </div>
+                            <!-- Se renderiza dinámicamente con admin.js (soporta eliminar y agregar) -->
                         </div>
 
                         <!-- Subir Archivo Propio desde Celular o PC -->
@@ -653,6 +639,128 @@
                                 <button type="button" class="btn-admin btn-admin-outline btn-theme-select" style="width: 100%;">
                                     Activar Este Tema
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- PESTAÑA: PIE DE PÁGINA & INFORMACIÓN LEGAL -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-footer">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-scale-balanced"></i> Pie de Página (Footer)</h2>
+                        </div>
+                        <p style="color: #A0A0A0; font-size: 0.92rem; margin-bottom: 1.25rem;">
+                            Personaliza la descripción de tu marca, la insignia de certificación formal y la leyenda de derechos reservados que aparecen en el pie de página de la web.
+                        </p>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Descripción / Filosofía de Marca (Bajo el Logo en el Footer)</label>
+                            <textarea id="footerDesc" rows="3" class="form-input-admin" placeholder="«Más que un corte, una experiencia...»"></textarea>
+                            <span class="form-help-admin">Este mensaje resume la esencia de VIP Barbers Club en la primera columna del pie de página.</span>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Insignia / Certificación Legal del Footer</label>
+                            <input type="text" id="footerLegalBadge" class="form-input-admin" placeholder="Razón Social: Vip Barbers Club · NIT: 1152218409-9">
+                            <span class="form-help-admin">Distintivo formal que acredita la legalidad del establecimiento ante los clientes.</span>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">Texto Legal de Derechos Reservados (Barra Inferior Copyright)</label>
+                            <textarea id="footerCopyright" rows="2" class="form-input-admin" placeholder="&copy; 2026 Vip Barbers Club (NIT: 1152218409-9)..."></textarea>
+                            <span class="form-help-admin">Leyenda de derechos de autor y protección de propiedad intelectual en la base del sitio web.</span>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Enlace Política de Privacidad</label>
+                                <input type="text" id="footerPrivacyUrl" class="form-input-admin" placeholder="politica-de-privacidad.html">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Enlace Términos y Condiciones</label>
+                                <input type="text" id="footerTermsUrl" class="form-input-admin" placeholder="terminos-y-condiciones.html">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-landmark"></i> Ficha Legal e Institucional Oficial</h2>
+                        </div>
+                        <p style="color: #A0A0A0; font-size: 0.92rem; margin-bottom: 1.25rem;">
+                            Estos datos alimentan la sección de Ficha Legal de la página principal (registro mercantil, DIAN, dirección física y canales de atención oficial).
+                        </p>
+
+                        <div class="form-grid-3">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Razón Social</label>
+                                <input type="text" id="legalBizName" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">NIT</label>
+                                <input type="text" id="legalBizNit" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Régimen / Entidad Tributaria</label>
+                                <input type="text" id="legalRegime" class="form-input-admin" placeholder="DIAN · República de Colombia">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Domicilio Principal</label>
+                                <input type="text" id="legalBizCity" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Dirección del Establecimiento</label>
+                                <input type="text" id="legalBizAddress" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Código Postal Oficial</label>
+                                <input type="text" id="legalBizPostal" class="form-input-admin" placeholder="050031">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Teléfono Comercial Oficial</label>
+                                <input type="text" id="legalBizPhone" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Correo Institucional</label>
+                                <input type="email" id="legalBizEmail" class="form-input-admin">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Dominio y Portal Web</label>
+                                <input type="text" id="legalBizWebsite" class="form-input-admin" placeholder="vipbarbersclub.space">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-eye"></i> Previsualización en Vivo del Pie de Página</h2>
+                        </div>
+                        <div class="footer-preview-box" style="background: #0A0A0A; border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-top: 0.5rem;">
+                            <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap;">
+                                <img src="logo-vip.jpg" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--admin-gold);">
+                                <div style="flex: 1; min-width: 260px;">
+                                    <div style="font-family: var(--font-heading); font-size: 1rem; color: #FFF; font-weight: 700;">VIP BARBERS <span style="font-size: 0.75rem; color: var(--admin-gold); font-weight: 400;">CLUB · MEDELLÍN</span></div>
+                                    <p id="prevFooterDesc" style="color: #BBB; font-size: 0.85rem; font-style: italic; margin-top: 0.35rem; line-height: 1.4;"></p>
+                                    <div id="prevFooterBadge" style="display: inline-block; margin-top: 0.5rem; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--admin-gold-light); font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: 4px;">
+                                        <i class="fa-solid fa-stamp"></i> Razón Social: Vip Barbers Club · NIT: 1152218409-9
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1rem; margin-top: 1rem; font-size: 0.78rem; color: #888; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                <div id="prevFooterCopyright">© 2026 Vip Barbers Club. Todos los derechos reservados.</div>
+                                <div style="display: flex; gap: 1rem;">
+                                    <span style="color: var(--admin-gold);">Política de Privacidad</span>
+                                    <span style="color: var(--admin-gold);">Términos y Condiciones</span>
+                                </div>
                             </div>
                         </div>
                     </div>
