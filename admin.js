@@ -379,14 +379,14 @@ function loadSiteData() {
             if (!siteData.footer) {
                 siteData.footer = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA.footer));
             } else {
-                if (!siteData.footer.description) siteData.footer.description = DEFAULT_SITE_DATA.footer.description;
-                if (!siteData.footer.badge) siteData.footer.badge = `Razón Social: ${siteData.business.name || 'Vip Barbers Club'} · NIT: ${siteData.business.nit || '1152218409-9'}`;
-                if (!siteData.footer.copyright) siteData.footer.copyright = DEFAULT_SITE_DATA.footer.copyright;
-                if (!siteData.footer.legalRegime) siteData.footer.legalRegime = DEFAULT_SITE_DATA.footer.legalRegime;
-                if (!siteData.footer.privacyUrl) siteData.footer.privacyUrl = 'politica-de-privacidad.html';
-                if (!siteData.footer.termsUrl) siteData.footer.termsUrl = 'terminos-y-condiciones.html';
+                if (siteData.footer.description === undefined) siteData.footer.description = DEFAULT_SITE_DATA.footer.description;
+                if (siteData.footer.badge === undefined) siteData.footer.badge = `Razón Social: ${siteData.business.name || 'Vip Barbers Club'} · NIT: ${siteData.business.nit || '1152218409-9'}`;
+                if (siteData.footer.copyright === undefined) siteData.footer.copyright = DEFAULT_SITE_DATA.footer.copyright;
+                if (siteData.footer.legalRegime === undefined) siteData.footer.legalRegime = DEFAULT_SITE_DATA.footer.legalRegime;
+                if (siteData.footer.privacyUrl === undefined) siteData.footer.privacyUrl = 'politica-de-privacidad.html';
+                if (siteData.footer.termsUrl === undefined) siteData.footer.termsUrl = 'terminos-y-condiciones.html';
             }
-            if (!siteData.business.website) {
+            if (siteData.business && siteData.business.website === undefined) {
                 siteData.business.website = 'vipbarbersclub.space';
             }
         } catch (e) {
@@ -460,29 +460,33 @@ function populateAllForms() {
     setVal('bizPhone', siteData.business.phone);
     setVal('bizEmail', siteData.business.email);
     setVal('bizAddress', siteData.business.address);
-    setVal('bizCity', siteData.business.city);
-    setVal('bizPostal', siteData.business.postalCode);
-    setVal('bizWebsite', siteData.business.website || 'vipbarbersclub.space');
-    setVal('bizHoursWeek', siteData.business.hoursWeek);
-    setVal('bizHoursWeekend', siteData.business.hoursWeekend);
+    setVal('bizName', siteData.business.name !== undefined ? siteData.business.name : 'Vip Barbers Club');
+    setVal('legalBizName', siteData.business.name !== undefined ? siteData.business.name : 'Vip Barbers Club');
+    setVal('bizNit', siteData.business.nit !== undefined ? siteData.business.nit : '1152218409-9');
+    setVal('legalBizNit', siteData.business.nit !== undefined ? siteData.business.nit : '1152218409-9');
+    setVal('bizPhone', siteData.business.phone !== undefined ? siteData.business.phone : '3043059911');
+    setVal('legalBizPhone', siteData.business.phone !== undefined ? siteData.business.phone : '3043059911');
+    setVal('bizEmail', siteData.business.email !== undefined ? siteData.business.email : 'servicioalcliente@vipbarbersclub.space');
+    setVal('legalBizEmail', siteData.business.email !== undefined ? siteData.business.email : 'servicioalcliente@vipbarbersclub.space');
+    setVal('bizAddress', siteData.business.address !== undefined ? siteData.business.address : 'Transversal 39B #72-101 segundo piso Av nutibara');
+    setVal('legalBizAddress', siteData.business.address !== undefined ? siteData.business.address : 'Transversal 39B #72-101 segundo piso Av nutibara');
+    setVal('bizCity', siteData.business.city !== undefined ? siteData.business.city : 'MEDELLÍN, ANTIOQUIA, COLOMBIA');
+    setVal('legalBizCity', siteData.business.city !== undefined ? siteData.business.city : 'MEDELLÍN, ANTIOQUIA, COLOMBIA');
+    setVal('bizPostal', siteData.business.postalCode !== undefined ? siteData.business.postalCode : '050031');
+    setVal('legalBizPostal', siteData.business.postalCode !== undefined ? siteData.business.postalCode : '050031');
+    setVal('bizWebsite', siteData.business.website !== undefined ? siteData.business.website : 'vipbarbersclub.space');
+    setVal('legalBizWebsite', siteData.business.website !== undefined ? siteData.business.website : 'vipbarbersclub.space');
+    setVal('bizHoursWeek', siteData.business.hoursWeek || '');
+    setVal('bizHoursWeekend', siteData.business.hoursWeekend || '');
 
     if (siteData.footer) {
-        setVal('footerDesc', siteData.footer.description || DEFAULT_SITE_DATA.footer.description);
-        setVal('footerLegalBadge', siteData.footer.badge || `Razón Social: ${siteData.business.name} · NIT: ${siteData.business.nit}`);
-        setVal('footerCopyright', siteData.footer.copyright || DEFAULT_SITE_DATA.footer.copyright);
+        setVal('footerDesc', siteData.footer.description !== undefined ? siteData.footer.description : DEFAULT_SITE_DATA.footer.description);
+        setVal('footerLegalBadge', siteData.footer.badge !== undefined ? siteData.footer.badge : (siteData.business.name ? `Razón Social: ${siteData.business.name} · NIT: ${siteData.business.nit}` : ''));
+        setVal('footerCopyright', siteData.footer.copyright !== undefined ? siteData.footer.copyright : DEFAULT_SITE_DATA.footer.copyright);
         setVal('footerPrivacyUrl', siteData.footer.privacyUrl || 'politica-de-privacidad.html');
         setVal('footerTermsUrl', siteData.footer.termsUrl || 'terminos-y-condiciones.html');
-        setVal('legalRegime', siteData.footer.legalRegime || 'DIAN · República de Colombia');
+        setVal('legalRegime', siteData.footer.legalRegime !== undefined ? siteData.footer.legalRegime : 'DIAN · República de Colombia');
     }
-
-    setVal('legalBizName', siteData.business.name);
-    setVal('legalBizNit', siteData.business.nit);
-    setVal('legalBizCity', siteData.business.city);
-    setVal('legalBizAddress', siteData.business.address);
-    setVal('legalBizPostal', siteData.business.postalCode);
-    setVal('legalBizPhone', siteData.business.phone);
-    setVal('legalBizEmail', siteData.business.email);
-    setVal('legalBizWebsite', siteData.business.website || 'vipbarbersclub.space');
 
     updateFooterLivePreview();
 
@@ -542,14 +546,38 @@ function getVal(id) {
 }
 
 function gatherFormData() {
-    const bName = sanitizeText(getVal('legalBizName') || getVal('bizName'));
-    const bNit = sanitizeText(getVal('legalBizNit') || getVal('bizNit'));
-    const bPhone = sanitizeText(getVal('legalBizPhone') || getVal('bizPhone'));
-    const bEmail = sanitizeText(getVal('legalBizEmail') || getVal('bizEmail'));
-    const bAddress = sanitizeText(getVal('legalBizAddress') || getVal('bizAddress'));
-    const bCity = sanitizeText(getVal('legalBizCity') || getVal('bizCity'));
-    const bPostal = sanitizeText(getVal('legalBizPostal') || getVal('bizPostal'));
-    const bWebsite = sanitizeText(getVal('legalBizWebsite') || getVal('bizWebsite')) || 'vipbarbersclub.space';
+    // Detectar qué pestaña está activa para leer los valores de negocio directamente del usuario
+    const activeTab = document.querySelector('.tab-pane.active');
+    const isFooterTab = activeTab && activeTab.id === 'tab-footer';
+
+    // Si el usuario está en tab-footer toma legalBizName, si está en tab-general toma bizName
+    // Si el campo está vacío, SE GUARDA VACÍO (permite quitar la razón social o cualquier dato a placer)
+    const bName = isFooterTab ? sanitizeText(getVal('legalBizName')) : sanitizeText(getVal('bizName'));
+    const bNit = isFooterTab ? sanitizeText(getVal('legalBizNit')) : sanitizeText(getVal('bizNit'));
+    const bPhone = isFooterTab ? sanitizeText(getVal('legalBizPhone')) : sanitizeText(getVal('bizPhone'));
+    const bEmail = isFooterTab ? sanitizeText(getVal('legalBizEmail')) : sanitizeText(getVal('bizEmail'));
+    const bAddress = isFooterTab ? sanitizeText(getVal('legalBizAddress')) : sanitizeText(getVal('bizAddress'));
+    const bCity = isFooterTab ? sanitizeText(getVal('legalBizCity')) : sanitizeText(getVal('bizCity'));
+    const bPostal = isFooterTab ? sanitizeText(getVal('legalBizPostal')) : sanitizeText(getVal('bizPostal'));
+    const bWebsite = isFooterTab ? sanitizeText(getVal('legalBizWebsite')) : sanitizeText(getVal('bizWebsite'));
+
+    // Sincronizar inmediatamente ambos inputs
+    setVal('bizName', bName);
+    setVal('legalBizName', bName);
+    setVal('bizNit', bNit);
+    setVal('legalBizNit', bNit);
+    setVal('bizPhone', bPhone);
+    setVal('legalBizPhone', bPhone);
+    setVal('bizEmail', bEmail);
+    setVal('legalBizEmail', bEmail);
+    setVal('bizAddress', bAddress);
+    setVal('legalBizAddress', bAddress);
+    setVal('bizCity', bCity);
+    setVal('legalBizCity', bCity);
+    setVal('bizPostal', bPostal);
+    setVal('legalBizPostal', bPostal);
+    setVal('bizWebsite', bWebsite);
+    setVal('legalBizWebsite', bWebsite);
 
     siteData.business.name = bName;
     siteData.business.nit = bNit;
@@ -563,12 +591,12 @@ function gatherFormData() {
     siteData.business.hoursWeekend = sanitizeText(getVal('bizHoursWeekend'));
 
     if (!siteData.footer) siteData.footer = {};
-    siteData.footer.description = getVal('footerDesc') || DEFAULT_SITE_DATA.footer.description;
-    siteData.footer.badge = getVal('footerLegalBadge') || `Razón Social: ${bName} · NIT: ${bNit}`;
-    siteData.footer.copyright = getVal('footerCopyright') || DEFAULT_SITE_DATA.footer.copyright;
-    siteData.footer.legalRegime = getVal('legalRegime') || 'DIAN · República de Colombia';
-    siteData.footer.privacyUrl = getVal('footerPrivacyUrl') || 'politica-de-privacidad.html';
-    siteData.footer.termsUrl = getVal('footerTermsUrl') || 'terminos-y-condiciones.html';
+    siteData.footer.description = getVal('footerDesc');
+    siteData.footer.badge = getVal('footerLegalBadge');
+    siteData.footer.copyright = getVal('footerCopyright');
+    siteData.footer.legalRegime = getVal('legalRegime');
+    siteData.footer.privacyUrl = getVal('footerPrivacyUrl');
+    siteData.footer.termsUrl = getVal('footerTermsUrl');
 
     siteData.socials.instagram = getVal('socInstagram');
     siteData.socials.facebook = getVal('socFacebook');
@@ -1311,19 +1339,51 @@ function initBannerController() {
 // 10. CONTROLADOR DEL PIE DE PÁGINA & INFORMACIÓN LEGAL (LIVE PREVIEW & SYNC)
 // ==========================================================================
 function updateFooterLivePreview() {
-    const desc = getVal('footerDesc') || (siteData && siteData.footer ? siteData.footer.description : '') || '«Más que un corte, una experiencia. En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle. Porque verte bien no es un lujo, es parte de quién eres.»';
-    const bName = getVal('legalBizName') || getVal('bizName') || (siteData && siteData.business ? siteData.business.name : 'Vip Barbers Club');
-    const bNit = getVal('legalBizNit') || getVal('bizNit') || (siteData && siteData.business ? siteData.business.nit : '1152218409-9');
-    const badge = getVal('footerLegalBadge') || `Razón Social: ${bName} · NIT: ${bNit}`;
-    const copy = getVal('footerCopyright') || `© 2026 ${bName} (NIT: ${bNit}). Transversal 39B #72-101 segundo piso Av nutibara, Medellín, Antioquia, Colombia. Todos los derechos reservados.`;
+    const activeTab = document.querySelector('.tab-pane.active');
+    const isFooterTab = activeTab && activeTab.id === 'tab-footer';
+
+    const bName = isFooterTab ? getVal('legalBizName') : getVal('bizName');
+    const bNit = isFooterTab ? getVal('legalBizNit') : getVal('bizNit');
+    const desc = getVal('footerDesc');
+    const badge = getVal('footerLegalBadge');
+    const copy = getVal('footerCopyright');
 
     const prevDesc = document.getElementById('prevFooterDesc');
     const prevBadge = document.getElementById('prevFooterBadge');
     const prevCopy = document.getElementById('prevFooterCopyright');
 
-    if (prevDesc) prevDesc.textContent = desc;
-    if (prevBadge) prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badge}`;
-    if (prevCopy) prevCopy.textContent = copy;
+    if (prevDesc) {
+        prevDesc.textContent = desc;
+        prevDesc.style.display = desc ? 'block' : 'none';
+    }
+    if (prevBadge) {
+        if (badge) {
+            prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badge}`;
+            prevBadge.style.display = 'inline-block';
+        } else if (bName || bNit) {
+            let defaultB = '';
+            if (bName && bNit) defaultB = `Razón Social: ${bName} · NIT: ${bNit}`;
+            else if (bName) defaultB = `Razón Social: ${bName}`;
+            else if (bNit) defaultB = `NIT: ${bNit}`;
+            prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${defaultB}`;
+            prevBadge.style.display = 'inline-block';
+        } else {
+            prevBadge.innerHTML = '';
+            prevBadge.style.display = 'none';
+        }
+    }
+    if (prevCopy) {
+        if (copy) {
+            prevCopy.innerHTML = copy;
+            prevCopy.style.display = 'block';
+        } else if (bName || bNit) {
+            prevCopy.innerHTML = `© 2026 ${bName} ${bNit ? '(NIT: ' + bNit + ')' : ''}. Todos los derechos reservados.`;
+            prevCopy.style.display = 'block';
+        } else {
+            prevCopy.innerHTML = '';
+            prevCopy.style.display = 'none';
+        }
+    }
 }
 
 function initFooterLiveSync() {
@@ -1342,13 +1402,15 @@ function initFooterLiveSync() {
         const el1 = document.getElementById(f1);
         const el2 = document.getElementById(f2);
         if (el1 && el2) {
-            el1.addEventListener('input', () => {
-                el2.value = el1.value;
-                updateFooterLivePreview();
-            });
-            el2.addEventListener('input', () => {
-                el1.value = el2.value;
-                updateFooterLivePreview();
+            ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+                el1.addEventListener(evt, () => {
+                    el2.value = el1.value;
+                    updateFooterLivePreview();
+                });
+                el2.addEventListener(evt, () => {
+                    el1.value = el2.value;
+                    updateFooterLivePreview();
+                });
             });
         }
     });
@@ -1356,8 +1418,9 @@ function initFooterLiveSync() {
     ['footerDesc', 'footerLegalBadge', 'footerCopyright', 'legalRegime', 'footerPrivacyUrl', 'footerTermsUrl'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener('input', updateFooterLivePreview);
-            el.addEventListener('change', updateFooterLivePreview);
+            ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+                el.addEventListener(evt, updateFooterLivePreview);
+            });
         }
     });
 }

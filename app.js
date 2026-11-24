@@ -403,117 +403,227 @@ function applyAdminSiteData() {
             }
         }
 
-        // d) Información Institucional y Ficha Legal Oficial
+        // d) Información Institucional y Ficha Legal Oficial (Edición y eliminación a placer)
         if (data.business) {
-            // Razón Social
-            if (data.business.name) {
-                document.querySelectorAll('[data-legal="biz-name"]').forEach(el => el.textContent = data.business.name);
+            // Razón Social: Si el dueño la quitó (está vacía), se oculta la tarjeta por completo
+            if (data.business.name !== undefined) {
+                const bName = data.business.name.trim();
+                document.querySelectorAll('[data-legal="biz-name"]').forEach(el => {
+                    el.textContent = bName;
+                    const item = el.closest('.legal-item');
+                    if (item) {
+                        item.style.display = bName ? '' : 'none';
+                    }
+                });
             }
-            // NIT
-            if (data.business.nit) {
-                document.querySelectorAll('[data-legal="biz-nit"]').forEach(el => el.textContent = data.business.nit);
-                document.querySelectorAll('[data-footer="link-nit"] span').forEach(el => el.textContent = `NIT: ${data.business.nit}`);
+
+            // NIT: Si el dueño lo quitó, se oculta la tarjeta y el enlace
+            if (data.business.nit !== undefined) {
+                const bNit = data.business.nit.trim();
+                document.querySelectorAll('[data-legal="biz-nit"]').forEach(el => {
+                    el.textContent = bNit;
+                    const item = el.closest('.legal-item');
+                    if (item) {
+                        item.style.display = bNit ? '' : 'none';
+                    }
+                });
+                document.querySelectorAll('[data-footer="link-nit"]').forEach(el => {
+                    if (bNit) {
+                        el.style.display = '';
+                        const span = el.querySelector('span');
+                        if (span) span.textContent = `NIT: ${bNit}`;
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
             }
+
             // Régimen tributario
-            const regimeText = (data.footer && data.footer.legalRegime) ? data.footer.legalRegime : 'DIAN · República de Colombia';
-            document.querySelectorAll('[data-legal="biz-regime"]').forEach(el => el.textContent = regimeText);
+            if (data.footer && data.footer.legalRegime !== undefined) {
+                const regimeText = data.footer.legalRegime.trim();
+                document.querySelectorAll('[data-legal="biz-regime"]').forEach(el => {
+                    el.textContent = regimeText;
+                    el.style.display = regimeText ? '' : 'none';
+                });
+            }
 
             // Domicilio Principal
-            if (data.business.city) {
-                document.querySelectorAll('[data-legal="biz-city"]').forEach(el => el.textContent = data.business.city);
+            if (data.business.city !== undefined) {
+                const bCity = data.business.city.trim();
+                document.querySelectorAll('[data-legal="biz-city"]').forEach(el => {
+                    el.textContent = bCity;
+                    const item = el.closest('.legal-item');
+                    if (item) item.style.display = bCity ? '' : 'none';
+                });
             }
+
             // Dirección del Establecimiento
-            if (data.business.address) {
-                document.querySelectorAll('[data-legal="biz-address"]').forEach(el => el.textContent = data.business.address);
+            if (data.business.address !== undefined) {
+                const bAddr = data.business.address.trim();
+                document.querySelectorAll('[data-legal="biz-address"]').forEach(el => {
+                    el.textContent = bAddr;
+                    const item = el.closest('.legal-item');
+                    if (item) item.style.display = bAddr ? '' : 'none';
+                });
                 const addressEl = document.querySelector('.contact-card-item span');
                 if (addressEl) {
-                    addressEl.textContent = data.business.address;
+                    addressEl.textContent = bAddr;
                 }
             }
+
             // Código Postal
-            if (data.business.postalCode) {
+            if (data.business.postalCode !== undefined) {
+                const bPostal = data.business.postalCode.trim();
                 document.querySelectorAll('.postal-code-val, [data-legal="biz-postal"]').forEach(el => {
-                    el.textContent = data.business.postalCode;
+                    el.textContent = bPostal;
+                    const item = el.closest('.legal-item');
+                    if (item) item.style.display = bPostal ? '' : 'none';
                 });
             }
+
             // Teléfono
-            if (data.business.phone) {
+            if (data.business.phone !== undefined) {
+                const bPhone = data.business.phone.trim();
                 document.querySelectorAll('[data-legal="biz-phone"]').forEach(link => {
-                    link.href = `tel:${data.business.phone}`;
-                    link.textContent = data.business.phone;
+                    link.textContent = bPhone;
+                    link.href = bPhone ? `tel:${bPhone}` : '#';
+                    const item = link.closest('.legal-item');
+                    if (item) item.style.display = bPhone ? '' : 'none';
                 });
-                const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
-                phoneLinks.forEach(link => {
-                    link.href = `tel:${data.business.phone}`;
-                    link.textContent = data.business.phone;
-                });
+                if (bPhone) {
+                    document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+                        link.href = `tel:${bPhone}`;
+                        link.textContent = bPhone;
+                    });
+                }
             }
+
             // Correo
-            if (data.business.email) {
+            if (data.business.email !== undefined) {
+                const bEmail = data.business.email.trim();
                 document.querySelectorAll('[data-legal="biz-email"]').forEach(link => {
-                    link.href = `mailto:${data.business.email}`;
-                    link.textContent = data.business.email;
+                    link.textContent = bEmail;
+                    link.href = bEmail ? `mailto:${bEmail}` : '#';
+                    const item = link.closest('.legal-item');
+                    if (item) item.style.display = bEmail ? '' : 'none';
                 });
-                const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
-                emailLinks.forEach(link => {
-                    link.href = `mailto:${data.business.email}`;
-                    link.textContent = data.business.email;
-                });
+                if (bEmail) {
+                    document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+                        link.href = `mailto:${bEmail}`;
+                        link.textContent = bEmail;
+                    });
+                }
             }
+
             // Dominio / Web
-            if (data.business.website) {
-                document.querySelectorAll('[data-legal="biz-website"]').forEach(el => el.textContent = data.business.website);
+            if (data.business.website !== undefined) {
+                const bWeb = data.business.website.trim();
+                document.querySelectorAll('[data-legal="biz-website"]').forEach(el => {
+                    el.textContent = bWeb;
+                    const item = el.closest('.legal-item');
+                    if (item) item.style.display = bWeb ? '' : 'none';
+                });
             }
         }
 
-        // e) Pie de Página (Footer) Completo
+        // e) Pie de Página (Footer) Completo (Edición y eliminación a placer)
         if (data.footer || data.business) {
-            // Descripción de Marca en el Footer
-            if (data.footer && data.footer.description) {
-                document.querySelectorAll('[data-footer="brand-desc"]').forEach(p => p.textContent = data.footer.description);
+            // Descripción de Marca en el Footer: Si está vacía se oculta
+            if (data.footer && data.footer.description !== undefined) {
+                const fDesc = data.footer.description.trim();
+                document.querySelectorAll('[data-footer="brand-desc"]').forEach(p => {
+                    p.textContent = fDesc;
+                    p.style.display = fDesc ? '' : 'none';
+                });
             }
 
-            // Insignia Legal del Footer
-            const badgeText = (data.footer && data.footer.badge) 
-                ? data.footer.badge 
-                : `Razón Social: ${(data.business && data.business.name) || 'Vip Barbers Club'} · NIT: ${(data.business && data.business.nit) || '1152218409-9'}`;
-            document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
-                b.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badgeText}`;
-            });
+            // Insignia Legal del Footer: Si se borra o la razón social no existe, se oculta
+            if (data.footer && data.footer.badge !== undefined) {
+                const fBadge = data.footer.badge.trim();
+                document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
+                    if (fBadge) {
+                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> ${fBadge}`;
+                        b.style.display = '';
+                    } else {
+                        b.innerHTML = '';
+                        b.style.display = 'none';
+                    }
+                });
+            } else if (data.business && data.business.name !== undefined) {
+                const bName = data.business.name.trim();
+                const bNit = (data.business.nit || '').trim();
+                document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
+                    if (!bName && !bNit) {
+                        b.innerHTML = '';
+                        b.style.display = 'none';
+                    } else if (bName && bNit) {
+                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> Razón Social: ${bName} · NIT: ${bNit}`;
+                        b.style.display = '';
+                    } else if (bName) {
+                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> Razón Social: ${bName}`;
+                        b.style.display = '';
+                    } else {
+                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> NIT: ${bNit}`;
+                        b.style.display = '';
+                    }
+                });
+            }
 
             // Contacto del Footer (Dirección, Teléfono, Correo, Web)
             if (data.business) {
-                const fullAddressText = `${data.business.address || 'Transversal 39B #72-101 segundo piso Av nutibara'}, ${data.business.city || 'Medellín, Antioquia'} (C.P. ${data.business.postalCode || '050031'})`;
-                document.querySelectorAll('[data-footer="contact-address"]').forEach(el => el.textContent = fullAddressText);
+                const fullAddressText = `${data.business.address || ''}${data.business.city ? ', ' + data.business.city : ''}${data.business.postalCode ? ' (C.P. ' + data.business.postalCode + ')' : ''}`;
+                document.querySelectorAll('[data-footer="contact-address"]').forEach(el => {
+                    el.textContent = fullAddressText;
+                    const li = el.closest('li');
+                    if (li) li.style.display = fullAddressText.trim() ? '' : 'none';
+                });
 
-                if (data.business.phone) {
+                if (data.business.phone !== undefined) {
+                    const bPhone = data.business.phone.trim();
                     document.querySelectorAll('[data-footer="contact-phone"]').forEach(a => {
-                        a.href = `tel:${data.business.phone}`;
-                        a.textContent = data.business.phone;
+                        a.textContent = bPhone;
+                        a.href = bPhone ? `tel:${bPhone}` : '#';
+                        const li = a.closest('li');
+                        if (li) li.style.display = bPhone ? '' : 'none';
                     });
                 }
-                if (data.business.email) {
+                if (data.business.email !== undefined) {
+                    const bEmail = data.business.email.trim();
                     document.querySelectorAll('[data-footer="contact-email"]').forEach(a => {
-                        a.href = `mailto:${data.business.email}`;
-                        a.textContent = data.business.email;
+                        a.textContent = bEmail;
+                        a.href = bEmail ? `mailto:${bEmail}` : '#';
+                        const li = a.closest('li');
+                        if (li) li.style.display = bEmail ? '' : 'none';
                     });
                 }
-                if (data.business.website) {
+                if (data.business.website !== undefined) {
+                    const bWeb = data.business.website.trim();
                     document.querySelectorAll('[data-footer="contact-website"]').forEach(span => {
-                        span.textContent = data.business.website;
+                        span.textContent = bWeb;
+                        const li = span.closest('li');
+                        if (li) li.style.display = bWeb ? '' : 'none';
                     });
                 }
             }
 
             // Leyenda de Derechos Reservados / Copyright en la barra inferior
-            if (data.footer && data.footer.copyright) {
+            if (data.footer && data.footer.copyright !== undefined) {
+                const fCopy = data.footer.copyright.trim();
                 document.querySelectorAll('[data-footer="copyright-text"]').forEach(el => {
-                    el.innerHTML = data.footer.copyright;
+                    el.innerHTML = fCopy;
+                    el.style.display = fCopy ? '' : 'none';
                 });
-            } else if (data.business) {
-                const defaultCopyright = `&copy; 2026 <strong>${data.business.name || 'Vip Barbers Club'}</strong> (NIT: ${data.business.nit || '1152218409-9'}). ${data.business.address || 'Transversal 39B #72-101 segundo piso Av nutibara'}, ${data.business.city || 'Medellín, Antioquia, Colombia'}. Todos los derechos reservados.`;
+            } else if (data.business && data.business.name !== undefined) {
+                const bName = data.business.name.trim();
+                const bNit = (data.business.nit || '').trim();
                 document.querySelectorAll('[data-footer="copyright-text"]').forEach(el => {
-                    el.innerHTML = defaultCopyright;
+                    if (bName || bNit) {
+                        el.innerHTML = `&copy; 2026 <strong>${bName}</strong> ${bNit ? '(NIT: ' + bNit + ')' : ''}. Todos los derechos reservados.`;
+                        el.style.display = '';
+                    } else {
+                        el.innerHTML = '&copy; 2026. Todos los derechos reservados.';
+                        el.style.display = '';
+                    }
                 });
             }
 
