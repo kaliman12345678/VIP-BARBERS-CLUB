@@ -526,8 +526,22 @@ function applyAdminSiteData() {
             }
         }
 
-        // e) Pie de Página (Footer) Completo (Edición y eliminación a placer)
+        // e) Pie de Página (Footer) Completo (Edición, WYSIWYG y eliminación a placer)
         if (data.footer || data.business) {
+            // Título de Marca del Footer
+            if (data.footer && data.footer.brandTitle !== undefined) {
+                document.querySelectorAll('[data-footer="brand-title"]').forEach(el => {
+                    el.textContent = data.footer.brandTitle;
+                });
+            }
+
+            // Subtítulo de Marca del Footer
+            if (data.footer && data.footer.brandSubtitle !== undefined) {
+                document.querySelectorAll('[data-footer="brand-subtitle"]').forEach(el => {
+                    el.textContent = data.footer.brandSubtitle;
+                });
+            }
+
             // Descripción de Marca en el Footer: Si está vacía se oculta
             if (data.footer && data.footer.description !== undefined) {
                 const fDesc = data.footer.description.trim();
@@ -537,7 +551,7 @@ function applyAdminSiteData() {
                 });
             }
 
-            // Insignia Legal del Footer: Si se borra o la razón social no existe, se oculta
+            // Insignia Legal del Footer: Si se borra, se oculta
             if (data.footer && data.footer.badge !== undefined) {
                 const fBadge = data.footer.badge.trim();
                 document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
@@ -547,24 +561,6 @@ function applyAdminSiteData() {
                     } else {
                         b.innerHTML = '';
                         b.style.display = 'none';
-                    }
-                });
-            } else if (data.business && data.business.name !== undefined) {
-                const bName = data.business.name.trim();
-                const bNit = (data.business.nit || '').trim();
-                document.querySelectorAll('[data-footer="legal-badge"]').forEach(b => {
-                    if (!bName && !bNit) {
-                        b.innerHTML = '';
-                        b.style.display = 'none';
-                    } else if (bName && bNit) {
-                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> Razón Social: ${bName} · NIT: ${bNit}`;
-                        b.style.display = '';
-                    } else if (bName) {
-                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> Razón Social: ${bName}`;
-                        b.style.display = '';
-                    } else {
-                        b.innerHTML = `<i class="fa-solid fa-stamp"></i> NIT: ${bNit}`;
-                        b.style.display = '';
                     }
                 });
             }
@@ -613,149 +609,30 @@ function applyAdminSiteData() {
                     el.innerHTML = fCopy;
                     el.style.display = fCopy ? '' : 'none';
                 });
-            } else if (data.business && data.business.name !== undefined) {
-                const bName = data.business.name.trim();
-                const bNit = (data.business.nit || '').trim();
-                document.querySelectorAll('[data-footer="copyright-text"]').forEach(el => {
-                    if (bName || bNit) {
-                        el.innerHTML = `&copy; 2026 <strong>${bName}</strong> ${bNit ? '(NIT: ' + bNit + ')' : ''}. Todos los derechos reservados.`;
-                        el.style.display = '';
-                    } else {
-                        el.innerHTML = '&copy; 2026. Todos los derechos reservados.';
-                        el.style.display = '';
-                    }
-                });
             }
 
             // Enlaces legales del footer
-            if (data.footer && data.footer.privacyUrl) {
-                document.querySelectorAll('[data-footer="link-privacidad"], [data-footer="bottom-privacidad"]').forEach(a => {
-                    a.href = data.footer.privacyUrl;
-                });
-            }
-            if (data.footer && data.footer.termsUrl) {
-                document.querySelectorAll('[data-footer="link-terminos"], [data-footer="bottom-terminos"]').forEach(a => {
-                    a.href = data.footer.termsUrl;
-                });
-            }
-        }
-
-        // Redes Sociales
-        if (data.socials) {
-            if (data.socials.instagram) {
-                document.querySelectorAll('a[href*="instagram.com"]').forEach(a => a.href = data.socials.instagram);
-            }
-            if (data.socials.facebook) {
-                document.querySelectorAll('a[href*="facebook.com"]').forEach(a => a.href = data.socials.facebook);
-            }
-            if (data.socials.whatsapp) {
-                document.querySelectorAll('.floating-whatsapp').forEach(a => a.href = data.socials.whatsapp);
-            }
-        }
-
-        // e) Direccionamiento y Personalización de Todos los Botones
-        if (data.buttons) {
-            function sanitizeUrl(url) {
-                if (typeof url !== 'string') return '';
-                const trimmed = url.trim();
-                if (!trimmed) return '';
-                if (trimmed.startsWith('#')) return trimmed;
-                if (/^(https?:\/\/|tel:|mailto:)/i.test(trimmed)) return trimmed;
-                if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(trimmed)) return 'https://' + trimmed;
-                return '#contacto';
-            }
-
-            function configureButton(elements, url, text) {
-                if (!elements) return;
-                const list = (elements instanceof NodeList || Array.isArray(elements)) ? elements : [elements];
-                list.forEach(btn => {
-                    if (!btn) return;
-                    if (url) {
-                        const safeUrl = sanitizeUrl(url);
-                        btn.setAttribute('href', safeUrl);
-                        if (safeUrl.startsWith('http://') || safeUrl.startsWith('https://')) {
-                            btn.setAttribute('target', '_blank');
-                            btn.setAttribute('rel', 'noopener noreferrer');
-                        } else {
-                            btn.removeAttribute('target');
-                            btn.removeAttribute('rel');
-                        }
-                    }
-                    if (text) {
-                        const span = btn.querySelector('span');
-                        if (span) {
-                            span.textContent = text;
-                        }
-                    }
-                });
-            }
-
-            // 1. Botón "Reservar Cita" (Navbar & Menú Móvil)
-            configureButton(
-                document.querySelectorAll('[data-btn-id="nav-reserve"], .btn-nav-reserve, .nav-cta-btn'),
-                data.buttons.navReserveUrl,
-                data.buttons.navReserveText
-            );
-
-            // 2. Botón Principal del Hero ("Agendar Mi Cita VIP")
-            configureButton(
-                document.querySelectorAll('[data-btn-id="hero-primary"]'),
-                data.buttons.heroPrimaryUrl,
-                data.buttons.heroPrimaryText
-            );
-
-            // 3. Botón Secundario del Hero ("Ver Catálogo")
-            configureButton(
-                document.querySelectorAll('[data-btn-id="hero-secondary"]'),
-                data.buttons.heroSecondaryUrl,
-                data.buttons.heroSecondaryText
-            );
-
-            // 4. Botón de Rituales ("Reservar Este Ritual" y "Vivir Experiencia")
-            if (data.buttons.ritualReserveUrl) {
-                configureButton(
-                    document.querySelectorAll('[data-btn-id="ritual-reserve"], [data-btn-id="experience-reserve"]'),
-                    data.buttons.ritualReserveUrl
-                );
-            }
-
-            // 5. Botón Flotante de WhatsApp y Enlaces Rápidos (wa.link)
-            if (data.buttons.whatsappFloatUrl) {
-                document.querySelectorAll('.floating-whatsapp').forEach(a => {
-                    a.href = data.buttons.whatsappFloatUrl;
-                });
-                document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp.com"], a[href*="wa.link"]').forEach(a => {
-                    if (!a.classList.contains('service-cta-btn') && !a.classList.contains('btn-book-service')) {
-                        a.href = data.buttons.whatsappFloatUrl;
-                    }
-                });
-            }
-
-            // 6. Botón "¿Cómo llegar? / Ver Mapa" (Google Maps)
-            if (data.buttons.mapsDirectionUrl) {
-                configureButton(
-                    document.querySelectorAll('[data-btn-id="maps-direction"], .maps-direction-btn'),
-                    data.buttons.mapsDirectionUrl
-                );
-                document.querySelectorAll('a[href*="maps.google.com/maps/dir"]').forEach(a => {
-                    a.href = data.buttons.mapsDirectionUrl;
-                });
-            }
-
-            // 7. Botones del Catálogo de Servicios
-            if (data.buttons.servicesReserveUrl && (data.buttons.servicesReserveUrl.startsWith('http://') || data.buttons.servicesReserveUrl.startsWith('https://') || data.buttons.servicesReserveUrl.startsWith('#'))) {
-                document.querySelectorAll('.service-cta-btn, .btn-book-service').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (data.buttons.servicesReserveUrl.startsWith('#')) {
-                            const targetEl = document.querySelector(data.buttons.servicesReserveUrl);
-                            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
-                        } else {
-                            window.open(data.buttons.servicesReserveUrl, '_blank', 'noopener,noreferrer');
-                        }
-                    }, { capture: true });
-                });
+            if (data.footer) {
+                if (data.footer.privacyText) {
+                    document.querySelectorAll('[data-footer="link-privacidad"], [data-footer="bottom-privacidad"]').forEach(a => {
+                        a.textContent = data.footer.privacyText;
+                    });
+                }
+                if (data.footer.privacyUrl) {
+                    document.querySelectorAll('[data-footer="link-privacidad"], [data-footer="bottom-privacidad"]').forEach(a => {
+                        a.href = data.footer.privacyUrl;
+                    });
+                }
+                if (data.footer.termsText) {
+                    document.querySelectorAll('[data-footer="link-terminos"], [data-footer="bottom-terminos"]').forEach(a => {
+                        a.textContent = data.footer.termsText;
+                    });
+                }
+                if (data.footer.termsUrl) {
+                    document.querySelectorAll('[data-footer="link-terminos"], [data-footer="bottom-terminos"]').forEach(a => {
+                        a.href = data.footer.termsUrl;
+                    });
+                }
             }
         }
     } catch (e) {

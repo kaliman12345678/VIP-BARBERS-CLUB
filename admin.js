@@ -187,11 +187,15 @@ const DEFAULT_SITE_DATA = {
         }
     ],
     footer: {
+        brandTitle: "VIP BARBERS",
+        brandSubtitle: "CLUB · MEDELLÍN",
         description: "«Más que un corte, una experiencia. En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle. Porque verte bien no es un lujo, es parte de quién eres.»",
         badge: "Razón Social: Vip Barbers Club · NIT: 1152218409-9",
         copyright: "© 2026 Vip Barbers Club (NIT: 1152218409-9). Transversal 39B #72-101 segundo piso Av nutibara, Medellín, Antioquia, Colombia. Todos los derechos reservados.",
         legalRegime: "DIAN · República de Colombia",
+        privacyText: "Política de Privacidad",
         privacyUrl: "politica-de-privacidad.html",
+        termsText: "Términos y Condiciones",
         termsUrl: "terminos-y-condiciones.html"
     }
 };
@@ -480,10 +484,14 @@ function populateAllForms() {
     setVal('bizHoursWeekend', siteData.business.hoursWeekend || '');
 
     if (siteData.footer) {
+        setVal('footerBrandTitle', siteData.footer.brandTitle !== undefined ? siteData.footer.brandTitle : 'VIP BARBERS');
+        setVal('footerBrandSubtitle', siteData.footer.brandSubtitle !== undefined ? siteData.footer.brandSubtitle : 'CLUB · MEDELLÍN');
         setVal('footerDesc', siteData.footer.description !== undefined ? siteData.footer.description : DEFAULT_SITE_DATA.footer.description);
-        setVal('footerLegalBadge', siteData.footer.badge !== undefined ? siteData.footer.badge : (siteData.business.name ? `Razón Social: ${siteData.business.name} · NIT: ${siteData.business.nit}` : ''));
+        setVal('footerLegalBadge', siteData.footer.badge !== undefined ? siteData.footer.badge : '');
         setVal('footerCopyright', siteData.footer.copyright !== undefined ? siteData.footer.copyright : DEFAULT_SITE_DATA.footer.copyright);
+        setVal('footerPrivacyText', siteData.footer.privacyText || 'Política de Privacidad');
         setVal('footerPrivacyUrl', siteData.footer.privacyUrl || 'politica-de-privacidad.html');
+        setVal('footerTermsText', siteData.footer.termsText || 'Términos y Condiciones');
         setVal('footerTermsUrl', siteData.footer.termsUrl || 'terminos-y-condiciones.html');
         setVal('legalRegime', siteData.footer.legalRegime !== undefined ? siteData.footer.legalRegime : 'DIAN · República de Colombia');
     }
@@ -591,12 +599,16 @@ function gatherFormData() {
     siteData.business.hoursWeekend = sanitizeText(getVal('bizHoursWeekend'));
 
     if (!siteData.footer) siteData.footer = {};
+    siteData.footer.brandTitle = sanitizeText(getVal('footerBrandTitle')) || 'VIP BARBERS';
+    siteData.footer.brandSubtitle = sanitizeText(getVal('footerBrandSubtitle')) || 'CLUB · MEDELLÍN';
     siteData.footer.description = getVal('footerDesc');
     siteData.footer.badge = getVal('footerLegalBadge');
     siteData.footer.copyright = getVal('footerCopyright');
     siteData.footer.legalRegime = getVal('legalRegime');
-    siteData.footer.privacyUrl = getVal('footerPrivacyUrl');
-    siteData.footer.termsUrl = getVal('footerTermsUrl');
+    siteData.footer.privacyText = getVal('footerPrivacyText') || 'Política de Privacidad';
+    siteData.footer.privacyUrl = getVal('footerPrivacyUrl') || 'politica-de-privacidad.html';
+    siteData.footer.termsText = getVal('footerTermsText') || 'Términos y Condiciones';
+    siteData.footer.termsUrl = getVal('footerTermsUrl') || 'terminos-y-condiciones.html';
 
     siteData.socials.instagram = getVal('socInstagram');
     siteData.socials.facebook = getVal('socFacebook');
@@ -1336,57 +1348,60 @@ function initBannerController() {
 
 
 // ==========================================================================
-// 10. CONTROLADOR DEL PIE DE PÁGINA & INFORMACIÓN LEGAL (LIVE PREVIEW & SYNC)
+// 10. CONTROLADOR DEL PIE DE PÁGINA & INFORMACIÓN LEGAL (WYSIWYG + LIVE SYNC)
 // ==========================================================================
 function updateFooterLivePreview() {
-    const activeTab = document.querySelector('.tab-pane.active');
-    const isFooterTab = activeTab && activeTab.id === 'tab-footer';
-
-    const bName = isFooterTab ? getVal('legalBizName') : getVal('bizName');
-    const bNit = isFooterTab ? getVal('legalBizNit') : getVal('bizNit');
+    const title = getVal('footerBrandTitle') || 'VIP BARBERS';
+    const subtitle = getVal('footerBrandSubtitle') || 'CLUB · MEDELLÍN';
     const desc = getVal('footerDesc');
     const badge = getVal('footerLegalBadge');
     const copy = getVal('footerCopyright');
+    const privText = getVal('footerPrivacyText') || 'Política de Privacidad';
+    const termsText = getVal('footerTermsText') || 'Términos y Condiciones';
 
+    const prevTitle = document.getElementById('prevFooterTitle');
+    const prevSubtitle = document.getElementById('prevFooterSubtitle');
     const prevDesc = document.getElementById('prevFooterDesc');
-    const prevBadge = document.getElementById('prevFooterBadge');
+    const prevBadgeContainer = document.getElementById('prevBadgeContainer');
+    const prevBadgeText = document.getElementById('prevFooterBadgeText');
     const prevCopy = document.getElementById('prevFooterCopyright');
+    const prevPriv = document.getElementById('prevPrivacyText');
+    const prevTerms = document.getElementById('prevTermsText');
+
+    if (prevTitle && document.activeElement !== prevTitle) prevTitle.textContent = title;
+    if (prevSubtitle && document.activeElement !== prevSubtitle) prevSubtitle.textContent = subtitle;
 
     if (prevDesc) {
-        prevDesc.textContent = desc;
+        if (document.activeElement !== prevDesc) {
+            prevDesc.textContent = desc;
+        }
         prevDesc.style.display = desc ? 'block' : 'none';
     }
-    if (prevBadge) {
-        if (badge) {
-            prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${badge}`;
-            prevBadge.style.display = 'inline-block';
-        } else if (bName || bNit) {
-            let defaultB = '';
-            if (bName && bNit) defaultB = `Razón Social: ${bName} · NIT: ${bNit}`;
-            else if (bName) defaultB = `Razón Social: ${bName}`;
-            else if (bNit) defaultB = `NIT: ${bNit}`;
-            prevBadge.innerHTML = `<i class="fa-solid fa-stamp"></i> ${defaultB}`;
-            prevBadge.style.display = 'inline-block';
+
+    if (prevBadgeContainer && prevBadgeText) {
+        if (badge && badge.trim()) {
+            if (document.activeElement !== document.getElementById('prevFooterBadge')) {
+                prevBadgeText.textContent = badge;
+            }
+            prevBadgeContainer.style.display = 'flex';
         } else {
-            prevBadge.innerHTML = '';
-            prevBadge.style.display = 'none';
+            prevBadgeContainer.style.display = 'none';
         }
     }
+
     if (prevCopy) {
-        if (copy) {
-            prevCopy.innerHTML = copy;
-            prevCopy.style.display = 'block';
-        } else if (bName || bNit) {
-            prevCopy.innerHTML = `© 2026 ${bName} ${bNit ? '(NIT: ' + bNit + ')' : ''}. Todos los derechos reservados.`;
-            prevCopy.style.display = 'block';
-        } else {
-            prevCopy.innerHTML = '';
-            prevCopy.style.display = 'none';
+        if (document.activeElement !== prevCopy) {
+            prevCopy.textContent = copy;
         }
+        prevCopy.style.display = copy ? 'block' : 'none';
     }
+
+    if (prevPriv && document.activeElement !== prevPriv) prevPriv.textContent = privText;
+    if (prevTerms && document.activeElement !== prevTerms) prevTerms.textContent = termsText;
 }
 
 function initFooterLiveSync() {
+    // 1. Sincronización bidireccional entre campos del formulario
     const syncPairs = [
         ['bizName', 'legalBizName'],
         ['bizNit', 'legalBizNit'],
@@ -1415,7 +1430,13 @@ function initFooterLiveSync() {
         }
     });
 
-    ['footerDesc', 'footerLegalBadge', 'footerCopyright', 'legalRegime', 'footerPrivacyUrl', 'footerTermsUrl'].forEach(id => {
+    // Inputs que actualizan la previsualización al escribir
+    const formInputIds = [
+        'footerBrandTitle', 'footerBrandSubtitle', 'footerDesc',
+        'footerLegalBadge', 'footerCopyright', 'footerPrivacyText',
+        'footerPrivacyUrl', 'footerTermsText', 'footerTermsUrl', 'legalRegime'
+    ];
+    formInputIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             ['input', 'change', 'keyup', 'paste'].forEach(evt => {
@@ -1423,4 +1444,123 @@ function initFooterLiveSync() {
             });
         }
     });
+
+    // 2. WYSIWYG directo: Al escribir DENTRO del cuadro visual, sincronizar hacia los inputs del formulario
+    function bindContentEditable(elementId, inputId, isBadge = false) {
+        const el = document.getElementById(elementId);
+        const input = document.getElementById(inputId);
+        if (!el || !input) return;
+
+        el.addEventListener('input', () => {
+            let text = el.innerText.trim();
+            if (isBadge) {
+                // Quitar icono del texto si existe
+                text = text.replace(/^[\s\uF000-\uFFFF\uE000-\uF8FF]+/, '').trim();
+            }
+            input.value = text;
+        });
+    }
+
+    bindContentEditable('prevFooterTitle', 'footerBrandTitle');
+    bindContentEditable('prevFooterSubtitle', 'footerBrandSubtitle');
+    bindContentEditable('prevFooterDesc', 'footerDesc');
+    bindContentEditable('prevFooterBadge', 'footerLegalBadge', true);
+    bindContentEditable('prevFooterCopyright', 'footerCopyright');
+    bindContentEditable('prevPrivacyText', 'footerPrivacyText');
+    bindContentEditable('prevTermsText', 'footerTermsText');
+
+    // 3. Botones de Acción Rápida para el Usuario (Quitar y Editar a placer)
+
+    // A. Quitar Insignia Legal
+    const clearBadge = () => {
+        setVal('footerLegalBadge', '');
+        const prevContainer = document.getElementById('prevBadgeContainer');
+        if (prevContainer) prevContainer.style.display = 'none';
+        showToast('Insignia legal quitada del pie de página');
+    };
+    const btnQuickClearBadge = document.getElementById('btnQuickClearBadge');
+    if (btnQuickClearBadge) btnQuickClearBadge.addEventListener('click', clearBadge);
+    const btnBadgeClearInline = document.getElementById('btnBadgeClearInline');
+    if (btnBadgeClearInline) btnBadgeClearInline.addEventListener('click', clearBadge);
+    const btnFormClearBadge = document.getElementById('btnFormClearBadge');
+    if (btnFormClearBadge) btnFormClearBadge.addEventListener('click', clearBadge);
+
+    // B. Borrar Razón Social por Completo de Todo el Sitio
+    const clearRazon = () => {
+        setVal('bizName', '');
+        setVal('legalBizName', '');
+        // Si la insignia contenía "Razón Social:", limpiarla también
+        const currentBadge = getVal('footerLegalBadge');
+        if (currentBadge.includes('Razón Social')) {
+            const nitMatch = currentBadge.match(/NIT:[^·]*/);
+            setVal('footerLegalBadge', nitMatch ? nitMatch[0].trim() : '');
+        }
+        // Si el copyright contenía la razón social, limpiarlo
+        const currentCopy = getVal('footerCopyright');
+        if (currentCopy.includes('Vip Barbers Club')) {
+            setVal('footerCopyright', currentCopy.replace(/Vip Barbers Club/gi, '').replace(/\(\s*NIT:[^)]*\)/gi, '').replace(/\s{2,}/g, ' '));
+        }
+        updateFooterLivePreview();
+        showToast('Razón Social borrada. Recuerda presionar "Guardar Cambios".');
+    };
+    const btnQuickClearRazon = document.getElementById('btnQuickClearRazon');
+    if (btnQuickClearRazon) btnQuickClearRazon.addEventListener('click', clearRazon);
+    const btnFormClearRazon = document.getElementById('btnFormClearRazon');
+    if (btnFormClearRazon) btnFormClearRazon.addEventListener('click', clearRazon);
+
+    // C. Quitar NIT
+    const btnFormClearNit = document.getElementById('btnFormClearNit');
+    if (btnFormClearNit) {
+        btnFormClearNit.addEventListener('click', () => {
+            setVal('bizNit', '');
+            setVal('legalBizNit', '');
+            const currentBadge = getVal('footerLegalBadge');
+            if (currentBadge.includes('NIT:')) {
+                setVal('footerLegalBadge', currentBadge.replace(/·?\s*NIT:[^·]*/gi, '').trim());
+            }
+            updateFooterLivePreview();
+            showToast('NIT quitado. Presiona "Guardar Cambios".');
+        });
+    }
+
+    // D. Vaciar Descripción
+    const clearDesc = () => {
+        setVal('footerDesc', '');
+        updateFooterLivePreview();
+        showToast('Descripción vaciada');
+    };
+    const btnQuickClearDesc = document.getElementById('btnQuickClearDesc');
+    if (btnQuickClearDesc) btnQuickClearDesc.addEventListener('click', clearDesc);
+    const btnFormClearDesc = document.getElementById('btnFormClearDesc');
+    if (btnFormClearDesc) btnFormClearDesc.addEventListener('click', clearDesc);
+
+    // E. Vaciar Copyright
+    const clearCopy = () => {
+        setVal('footerCopyright', '');
+        updateFooterLivePreview();
+        showToast('Texto de Copyright vaciado');
+    };
+    const btnQuickClearCopy = document.getElementById('btnQuickClearCopy');
+    if (btnQuickClearCopy) btnQuickClearCopy.addEventListener('click', clearCopy);
+    const btnFormClearCopy = document.getElementById('btnFormClearCopy');
+    if (btnFormClearCopy) btnFormClearCopy.addEventListener('click', clearCopy);
+
+    // F. Restaurar Plantilla Predeterminada
+    const btnQuickRestoreFooter = document.getElementById('btnQuickRestoreFooter');
+    if (btnQuickRestoreFooter) {
+        btnQuickRestoreFooter.addEventListener('click', () => {
+            if (!confirm('¿Deseas restaurar los textos predeterminados originales del pie de página?')) return;
+            setVal('footerBrandTitle', DEFAULT_SITE_DATA.footer.brandTitle);
+            setVal('footerBrandSubtitle', DEFAULT_SITE_DATA.footer.brandSubtitle);
+            setVal('footerDesc', DEFAULT_SITE_DATA.footer.description);
+            setVal('footerLegalBadge', DEFAULT_SITE_DATA.footer.badge);
+            setVal('footerCopyright', DEFAULT_SITE_DATA.footer.copyright);
+            setVal('footerPrivacyText', DEFAULT_SITE_DATA.footer.privacyText);
+            setVal('footerPrivacyUrl', DEFAULT_SITE_DATA.footer.privacyUrl);
+            setVal('footerTermsText', DEFAULT_SITE_DATA.footer.termsText);
+            setVal('footerTermsUrl', DEFAULT_SITE_DATA.footer.termsUrl);
+            updateFooterLivePreview();
+            showToast('Plantilla del pie de página restaurada');
+        });
+    }
 }

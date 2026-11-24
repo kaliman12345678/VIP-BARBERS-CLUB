@@ -649,61 +649,184 @@
                 <!-- PESTAÑA: PIE DE PÁGINA & INFORMACIÓN LEGAL -->
                 <!-- ======================================================== -->
                 <div class="tab-pane" id="tab-footer">
-                    <div class="card-admin">
-                        <div class="card-admin-header">
-                            <h2 class="card-admin-title"><i class="fa-solid fa-scale-balanced"></i> Pie de Página (Footer)</h2>
+                    <!-- ======================================================== -->
+                    <!-- 1. EDITOR VISUAL INTERACTIVO DIRECTO (WYSIWYG) -->
+                    <!-- ======================================================== -->
+                    <div class="card-admin" style="border: 1.5px solid var(--admin-gold); box-shadow: 0 0 25px rgba(212, 175, 55, 0.22); margin-bottom: 2rem;">
+                        <div class="card-admin-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                            <h2 class="card-admin-title" style="margin: 0;">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--admin-gold-light);"></i> Editor Visual Directo del Pie de Página
+                            </h2>
+                            <span style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--admin-gold); color: var(--admin-gold-light); font-size: 0.8rem; padding: 0.35rem 0.9rem; border-radius: 20px; font-weight: 600;">
+                                <i class="fa-solid fa-i-cursor"></i> Haz clic directo en cualquier texto para editarlo
+                            </span>
                         </div>
-                        <p style="color: #A0A0A0; font-size: 0.92rem; margin-bottom: 1.25rem;">
-                            Personaliza la descripción de tu marca, la insignia de certificación formal y la leyenda de derechos reservados que aparecen en el pie de página de la web.
+                        <p style="color: #A0A0A0; font-size: 0.93rem; margin: 0.5rem 0 1.25rem 0; line-height: 1.5;">
+                            Esta es la vista real de tu pie de página. Puedes <strong>hacer clic y escribir o borrar directamente</strong> sobre el título, subtítulo, descripción, insignia legal o derechos de autor, o usar los botones de acción rápida.
                         </p>
 
+                        <!-- Botones de Acción Rápida -->
+                        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                            <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnQuickClearBadge" style="color: #ff9999; border-color: rgba(230, 57, 70, 0.5);">
+                                <i class="fa-solid fa-trash-can"></i> Quitar Insignia Legal
+                            </button>
+                            <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnQuickClearRazon" style="color: #ffcc66; border-color: rgba(212, 175, 55, 0.5);">
+                                <i class="fa-solid fa-eraser"></i> Borrar Razón Social
+                            </button>
+                            <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnQuickClearDesc">
+                                <i class="fa-solid fa-paragraph"></i> Vaciar Descripción
+                            </button>
+                            <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnQuickClearCopy">
+                                <i class="fa-solid fa-copyright"></i> Vaciar Copyright
+                            </button>
+                            <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnQuickRestoreFooter" style="margin-left: auto;">
+                                <i class="fa-solid fa-rotate-left"></i> Restaurar Predeterminados
+                            </button>
+                        </div>
+
+                        <!-- Caja de Edición Directa Visual / WYSIWYG -->
+                        <div class="footer-preview-box" style="background: #080808; border: 1.5px solid var(--admin-gold-border); border-radius: 12px; padding: 1.75rem; position: relative;">
+                            <div style="display: flex; gap: 1.25rem; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                                <img src="logo-vip.jpg" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--admin-gold); object-fit: cover;">
+                                <div style="flex: 1; min-width: 260px;">
+                                    <div style="display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;">
+                                        <div id="prevFooterTitle" contenteditable="true" spellcheck="false" title="Haz clic para editar el título" style="font-family: var(--font-heading); font-size: 1.15rem; color: #FFF; font-weight: 700; border-bottom: 1px dashed rgba(212,175,55,0.4); outline: none; padding: 0.15rem 0.4rem; border-radius: 4px; cursor: text;">VIP BARBERS</div>
+                                        <div id="prevFooterSubtitle" contenteditable="true" spellcheck="false" title="Haz clic para editar el subtítulo" style="font-size: 0.82rem; color: var(--admin-gold); font-weight: 500; border-bottom: 1px dashed rgba(212,175,55,0.4); outline: none; padding: 0.15rem 0.4rem; border-radius: 4px; cursor: text;">CLUB · MEDELLÍN</div>
+                                    </div>
+                                    
+                                    <div id="prevFooterDesc" contenteditable="true" spellcheck="false" title="Haz clic para editar la descripción" style="color: #CCC; font-size: 0.88rem; font-style: italic; margin-top: 0.65rem; line-height: 1.5; border: 1px dashed rgba(255,255,255,0.18); padding: 0.5rem 0.75rem; border-radius: 6px; outline: none; background: rgba(255,255,255,0.02); cursor: text;">
+                                        «Más que un corte, una experiencia. En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle. Porque verte bien no es un lujo, es parte de quién eres.»
+                                    </div>
+
+                                    <div id="prevBadgeContainer" style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                        <div id="prevFooterBadge" contenteditable="true" spellcheck="false" title="Haz clic para editar la insignia legal" style="display: inline-block; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: var(--admin-gold-light); font-size: 0.78rem; padding: 0.35rem 0.85rem; border-radius: 6px; outline: none; cursor: text;">
+                                            <i class="fa-solid fa-stamp"></i> <span id="prevFooterBadgeText">Razón Social: Vip Barbers Club · NIT: 1152218409-9</span>
+                                        </div>
+                                        <button type="button" id="btnBadgeClearInline" title="Quitar esta insignia del pie de página" style="background: none; border: none; color: #E63946; cursor: pointer; font-size: 1rem; padding: 0.2rem 0.4rem;">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Copyright Editable Directamente -->
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1rem; margin-top: 1rem; font-size: 0.82rem; color: #888; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                                <div id="prevFooterCopyright" contenteditable="true" spellcheck="false" title="Haz clic para editar el texto de copyright" style="flex: 1; min-width: 250px; border-bottom: 1px dashed rgba(255,255,255,0.25); outline: none; padding: 0.25rem 0.5rem; border-radius: 4px; color: #AAA; cursor: text;">
+                                    © 2026 Vip Barbers Club. Todos los derechos reservados.
+                                </div>
+                                <div style="display: flex; gap: 1rem; font-size: 0.78rem;">
+                                    <span id="prevPrivacyText" contenteditable="true" spellcheck="false" style="color: var(--admin-gold); border-bottom: 1px dashed rgba(212,175,55,0.4); outline: none; cursor: text;">Política de Privacidad</span>
+                                    <span id="prevTermsText" contenteditable="true" spellcheck="false" style="color: var(--admin-gold); border-bottom: 1px dashed rgba(212,175,55,0.4); outline: none; cursor: text;">Términos y Condiciones</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- 2. FORMULARIO DETALLADO DEL PIE DE PÁGINA -->
+                    <!-- ======================================================== -->
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-sliders"></i> Campos Detallados del Pie de Página</h2>
+                        </div>
+                        <p style="color: #A0A0A0; font-size: 0.92rem; margin-bottom: 1.25rem;">
+                            También puedes editar cada dato individualmente con estos campos. Lo que modifiques aquí se sincroniza automáticamente con el editor visual de arriba.
+                        </p>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Título de Marca en el Pie de Página</label>
+                                <input type="text" id="footerBrandTitle" class="form-input-admin" placeholder="VIP BARBERS">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Subtítulo de Marca en el Pie de Página</label>
+                                <input type="text" id="footerBrandSubtitle" class="form-input-admin" placeholder="CLUB · MEDELLÍN">
+                            </div>
+                        </div>
+
                         <div class="form-group-admin">
-                            <label class="form-label-admin">Descripción / Filosofía de Marca (Bajo el Logo en el Footer)</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <label class="form-label-admin" style="margin: 0;">Descripción / Filosofía de Marca (Bajo el Logo)</label>
+                                <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnFormClearDesc" style="font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+                                    <i class="fa-solid fa-eraser"></i> Vaciar
+                                </button>
+                            </div>
                             <textarea id="footerDesc" rows="3" class="form-input-admin" placeholder="«Más que un corte, una experiencia...»"></textarea>
-                            <span class="form-help-admin">Este mensaje resume la esencia de VIP Barbers Club en la primera columna del pie de página.</span>
+                            <span class="form-help-admin">Puedes cambiar este texto o dejarlo vacío para quitarlo del pie de página.</span>
                         </div>
 
                         <div class="form-group-admin">
-                            <label class="form-label-admin">Insignia / Certificación Legal del Footer</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <label class="form-label-admin" style="margin: 0;">Insignia / Certificación Legal del Footer</label>
+                                <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnFormClearBadge" style="font-size: 0.72rem; padding: 0.2rem 0.6rem; color: #ff9999;">
+                                    <i class="fa-solid fa-trash-can"></i> Quitar Insignia
+                                </button>
+                            </div>
                             <input type="text" id="footerLegalBadge" class="form-input-admin" placeholder="Razón Social: Vip Barbers Club · NIT: 1152218409-9">
-                            <span class="form-help-admin">Distintivo formal que acredita la legalidad del establecimiento ante los clientes.</span>
+                            <span class="form-help-admin">Puedes escribir lo que desees o <strong>dejarlo completamente en blanco</strong> para quitar la insignia legal de la página.</span>
                         </div>
 
                         <div class="form-group-admin">
-                            <label class="form-label-admin">Texto Legal de Derechos Reservados (Barra Inferior Copyright)</label>
-                            <textarea id="footerCopyright" rows="2" class="form-input-admin" placeholder="&copy; 2026 Vip Barbers Club (NIT: 1152218409-9)..."></textarea>
-                            <span class="form-help-admin">Leyenda de derechos de autor y protección de propiedad intelectual en la base del sitio web.</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <label class="form-label-admin" style="margin: 0;">Texto Legal de Derechos Reservados (Copyright Inferior)</label>
+                                <button type="button" class="btn-admin btn-admin-outline btn-admin-sm" id="btnFormClearCopy" style="font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+                                    <i class="fa-solid fa-eraser"></i> Vaciar
+                                </button>
+                            </div>
+                            <textarea id="footerCopyright" rows="2" class="form-input-admin" placeholder="&copy; 2026 Vip Barbers Club..."></textarea>
+                            <span class="form-help-admin">Leyenda de derechos de autor en la barra final. Puedes editarla a tu gusto o vaciarla para ocultarla.</span>
                         </div>
 
                         <div class="form-grid-2">
                             <div class="form-group-admin">
-                                <label class="form-label-admin">Enlace Política de Privacidad</label>
-                                <input type="text" id="footerPrivacyUrl" class="form-input-admin" placeholder="politica-de-privacidad.html">
+                                <label class="form-label-admin">Texto Enlace Privacidad</label>
+                                <input type="text" id="footerPrivacyText" class="form-input-admin" placeholder="Política de Privacidad">
                             </div>
                             <div class="form-group-admin">
-                                <label class="form-label-admin">Enlace Términos y Condiciones</label>
+                                <label class="form-label-admin">URL Enlace Privacidad</label>
+                                <input type="text" id="footerPrivacyUrl" class="form-input-admin" placeholder="politica-de-privacidad.html">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Texto Enlace Términos</label>
+                                <input type="text" id="footerTermsText" class="form-input-admin" placeholder="Términos y Condiciones">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">URL Enlace Términos</label>
                                 <input type="text" id="footerTermsUrl" class="form-input-admin" placeholder="terminos-y-condiciones.html">
                             </div>
                         </div>
                     </div>
 
+                    <!-- ======================================================== -->
+                    <!-- 3. FICHA LEGAL E INSTITUCIONAL OFICIAL -->
+                    <!-- ======================================================== -->
                     <div class="card-admin">
                         <div class="card-admin-header">
-                            <h2 class="card-admin-title"><i class="fa-solid fa-landmark"></i> Ficha Legal e Institucional Oficial</h2>
+                            <h2 class="card-admin-title"><i class="fa-solid fa-landmark"></i> Ficha Legal e Institucional Oficial (Sección Transparencia)</h2>
                         </div>
                         <p style="color: #A0A0A0; font-size: 0.92rem; margin-bottom: 1.25rem;">
-                            Estos datos alimentan la sección de Ficha Legal de la página principal (registro mercantil, DIAN, dirección física y canales de atención oficial).
+                            Estos datos alimentan la cuadrícula de información institucional en la página web. Si dejas algún campo vacío, esa tarjeta desaparecerá automáticamente de la página pública.
                         </p>
 
                         <div class="form-grid-3">
                             <div class="form-group-admin">
-                                <label class="form-label-admin">Razón Social</label>
-                                <input type="text" id="legalBizName" class="form-input-admin" placeholder="Ej: Vip Barbers Club (o deja vacío para quitarla)">
-                                <span class="form-help-admin">Puedes cambiarla o dejarla en blanco si deseas quitar la razón social de la página.</span>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label class="form-label-admin" style="margin:0;">Razón Social</label>
+                                    <button type="button" id="btnFormClearRazon" class="btn-admin btn-admin-outline btn-admin-sm" style="font-size:0.68rem; padding:0.15rem 0.45rem;">Quitar</button>
+                                </div>
+                                <input type="text" id="legalBizName" class="form-input-admin" placeholder="Ej: Vip Barbers Club (o vacío para quitarla)">
+                                <span class="form-help-admin">Deja vacío para quitar la tarjeta de Razón Social.</span>
                             </div>
                             <div class="form-group-admin">
-                                <label class="form-label-admin">NIT</label>
-                                <input type="text" id="legalBizNit" class="form-input-admin">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label class="form-label-admin" style="margin:0;">NIT</label>
+                                    <button type="button" id="btnFormClearNit" class="btn-admin btn-admin-outline btn-admin-sm" style="font-size:0.68rem; padding:0.15rem 0.45rem;">Quitar</button>
+                                </div>
+                                <input type="text" id="legalBizNit" class="form-input-admin" placeholder="1152218409-9 (o vacío)">
+                                <span class="form-help-admin">Deja vacío para quitar el NIT de la página.</span>
                             </div>
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Régimen / Entidad Tributaria</label>
@@ -738,31 +861,6 @@
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Dominio y Portal Web</label>
                                 <input type="text" id="legalBizWebsite" class="form-input-admin" placeholder="vipbarbersclub.space">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-admin">
-                        <div class="card-admin-header">
-                            <h2 class="card-admin-title"><i class="fa-solid fa-eye"></i> Previsualización en Vivo del Pie de Página</h2>
-                        </div>
-                        <div class="footer-preview-box" style="background: #0A0A0A; border: 1px solid var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-top: 0.5rem;">
-                            <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap;">
-                                <img src="logo-vip.jpg" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--admin-gold);">
-                                <div style="flex: 1; min-width: 260px;">
-                                    <div style="font-family: var(--font-heading); font-size: 1rem; color: #FFF; font-weight: 700;">VIP BARBERS <span style="font-size: 0.75rem; color: var(--admin-gold); font-weight: 400;">CLUB · MEDELLÍN</span></div>
-                                    <p id="prevFooterDesc" style="color: #BBB; font-size: 0.85rem; font-style: italic; margin-top: 0.35rem; line-height: 1.4;"></p>
-                                    <div id="prevFooterBadge" style="display: inline-block; margin-top: 0.5rem; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--admin-gold-light); font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: 4px;">
-                                        <i class="fa-solid fa-stamp"></i> Razón Social: Vip Barbers Club · NIT: 1152218409-9
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1rem; margin-top: 1rem; font-size: 0.78rem; color: #888; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-                                <div id="prevFooterCopyright">© 2026 Vip Barbers Club. Todos los derechos reservados.</div>
-                                <div style="display: flex; gap: 1rem;">
-                                    <span style="color: var(--admin-gold);">Política de Privacidad</span>
-                                    <span style="color: var(--admin-gold);">Términos y Condiciones</span>
-                                </div>
                             </div>
                         </div>
                     </div>
