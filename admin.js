@@ -74,8 +74,10 @@ const DEFAULT_SITE_DATA = {
         quote: "«En VIP BARBERS CLUB llevamos la barbería a otro nivel, combinando técnica profesional, asesoría de imagen personalizada y atención a cada detalle.»",
         description: "Encontramos el estilo que mejor se adapta a tu rostro, cabello y personalidad, mientras disfrutas de una experiencia integral de bienestar que incluye vapor de ozono, lavado capilar y masaje descontracturante. Porque sabemos que verte bien no es un lujo, es parte de quién eres.",
         bgMedia: "hero-vip-barbershop.jpg",
-        bgMediaType: "image"
+        bgMediaType: "image",
+        overlayOpacity: 88
     },
+    theme: "gold-classic",
     socials: {
         instagram: "https://www.instagram.com/vipbarbersclub?dlrf=MWNwbzd5czJ4cXJ2bg==",
         facebook: "https://www.facebook.com/share/18VDVCjF9Z/?mibextid=wwXIfr",
@@ -185,6 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     loadSiteData();
     initNavigationTabs();
+    initThemesController();
+    initBannerController();
     populateAllForms();
     renderServicesList();
     renderGalleryList();
@@ -344,6 +348,13 @@ function loadSiteData() {
             if (!siteData.buttons) {
                 siteData.buttons = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA.buttons));
             }
+            if (!siteData.theme) {
+                siteData.theme = 'gold-classic';
+            }
+            if (!siteData.hero) siteData.hero = {};
+            if (siteData.hero.overlayOpacity === undefined) {
+                siteData.hero.overlayOpacity = 88;
+            }
         } catch (e) {
             console.error('Error parseando datos:', e);
             siteData = JSON.parse(JSON.stringify(DEFAULT_SITE_DATA));
@@ -431,6 +442,22 @@ function populateAllForms() {
     setVal('heroDesc', siteData.hero.description);
     setVal('heroBgMedia', siteData.hero.bgMedia);
     setVal('heroBgType', siteData.hero.bgMediaType || 'image');
+    const opacity = siteData.hero.overlayOpacity !== undefined ? siteData.hero.overlayOpacity : 88;
+    setVal('heroOverlayOpacity', opacity);
+    const opacityLabel = document.getElementById('overlayOpacityVal');
+    if (opacityLabel) opacityLabel.textContent = opacity + '%';
+
+    // Seleccionar tema activo en el panel
+    if (siteData.theme) {
+        document.documentElement.setAttribute('data-theme', siteData.theme);
+        updateActiveThemeCard(siteData.theme);
+    }
+
+    // Seleccionar banner activo en los presets
+    updateActivePresetBanner(siteData.hero.bgMedia);
+
+    // Actualizar previsualización en vivo
+    updateHeroLivePreview();
 
     if (siteData.buttons) {
         setVal('btnNavReserveText', siteData.buttons.navReserveText || 'Reservar Cita');
@@ -480,6 +507,8 @@ function gatherFormData() {
     siteData.hero.description = sanitizeText(getVal('heroDesc'));
     siteData.hero.bgMedia = getVal('heroBgMedia');
     siteData.hero.bgMediaType = getVal('heroBgType');
+    siteData.hero.overlayOpacity = parseInt(getVal('heroOverlayOpacity') || '88');
+    siteData.theme = siteData.theme || 'gold-classic';
 
     if (!siteData.buttons) siteData.buttons = {};
     siteData.buttons.navReserveText = sanitizeText(getVal('btnNavReserveText')) || 'Reservar Cita';
@@ -872,4 +901,184 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 4000);
+}
+
+// ==========================================================================
+// 8. CONTROLADOR DE TEMAS DE MARCA (NEGRO & ORO)
+// ==========================================================================
+function updateActiveThemeCard(activeThemeId) {
+    const cards = document.querySelectorAll('.theme-card');
+    cards.forEach(card => {
+        const themeId = card.getAttribute('data-theme-id');
+        const btn = card.querySelector('.btn-theme-select');
+        if (themeId === activeThemeId) {
+            card.classList.add('active');
+            if (btn) {
+                btn.className = 'btn-admin btn-admin-gold btn-theme-select';
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Tema Activo';
+            }
+        } else {
+            card.classList.remove('active');
+            if (btn) {
+                btn.className = 'btn-admin btn-admin-outline btn-theme-select';
+                btn.innerHTML = 'Activar Este Tema';
+            }
+        }
+    });
+}
+
+function initThemesController() {
+    const cards = document.querySelectorAll('.theme-card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const themeId = card.getAttribute('data-theme-id');
+            if (!themeId) return;
+
+            siteData.theme = themeId;
+            document.documentElement.setAttribute('data-theme', themeId);
+            updateActiveThemeCard(themeId);
+            showToast('Tema visual previsualizado: ' + themeId);
+        });
+    });
+}
+
+// ==========================================================================
+// 9. CONTROLADOR DEL BANNER PRINCIPAL DE PORTADA & LIVE PREVIEW
+// ==========================================================================
+function updateActivePresetBanner(currentSrc) {
+    const cards = document.querySelectorAll('.preset-banner-card');
+    cards.forEach(card => {
+        if (card.getAttribute('data-src') === currentSrc) {
+            card.classList.add('active');
+        } else {
+            card.classList.remove('active');
+        }
+    });
+}
+
+function updateHeroLivePreview() {
+    const prevTag = document.getElementById('prevHeroTag');
+    const prevTitle = document.getElementById('prevHeroTitle');
+    const prevQuote = document.getElementById('prevHeroQuote');
+    const prevDesc = document.getElementById('prevHeroDesc');
+    const previewLayer = document.getElementById('heroPreviewBgLayer');
+    const previewOverlay = document.getElementById('heroPreviewOverlay');
+    const opacityInput = document.getElementById('heroOverlayOpacity');
+
+    const tagVal = getVal('heroTag') || (siteData && siteData.hero ? siteData.hero.tag : 'Cuidado Masculino Premium');
+    const titleVal = getVal('heroTitle') || (siteData && siteData.hero ? siteData.hero.title : 'VIP BARBERS CLUB');
+    const quoteVal = getVal('heroQuote') || (siteData && siteData.hero ? siteData.hero.quote : '«Más que un corte, una experiencia»');
+    const descVal = getVal('heroDesc') || (siteData && siteData.hero ? siteData.hero.description : 'Encontramos el estilo que mejor se adapta a tu rostro...');
+    const bgMediaVal = getVal('heroBgMedia') || (siteData && siteData.hero ? siteData.hero.bgMedia : 'hero-vip-barbershop.jpg');
+    const bgTypeVal = getVal('heroBgType') || 'image';
+    const opacityVal = opacityInput ? parseInt(opacityInput.value || '88') : 88;
+
+    if (prevTag) prevTag.innerHTML = `<i class="fa-solid fa-gem"></i> ${tagVal}`;
+    if (prevTitle) prevTitle.textContent = titleVal;
+    if (prevQuote) prevQuote.textContent = quoteVal;
+    if (prevDesc) prevDesc.textContent = descVal;
+
+    // Actualizar fondo de previsualización
+    if (previewLayer) {
+        if (bgTypeVal === 'video') {
+            previewLayer.innerHTML = `
+                <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
+                    <source src="${bgMediaVal}" type="video/mp4">
+                </video>
+                <div class="hero-preview-overlay" id="heroPreviewOverlay"></div>
+            `;
+        } else {
+            previewLayer.innerHTML = `
+                <img src="${bgMediaVal}" id="heroPreviewImg" alt="Fondo Portada" style="width:100%; height:100%; object-fit:cover; object-position:center 30%;">
+                <div class="hero-preview-overlay" id="heroPreviewOverlay"></div>
+            `;
+        }
+    }
+
+    const updatedOverlay = document.getElementById('heroPreviewOverlay');
+    if (updatedOverlay) {
+        const opacDec = (opacityVal / 100).toFixed(2);
+        const opacMid = Math.max(0.1, opacDec - 0.12).toFixed(2);
+        updatedOverlay.style.background = `linear-gradient(135deg, rgba(10, 10, 10, ${opacDec}) 0%, rgba(17, 17, 17, ${opacMid}) 50%, rgba(10, 10, 10, ${opacDec}) 100%)`;
+    }
+}
+
+function initBannerController() {
+    // 1. Galería de Banners Prediseñados
+    const presetCards = document.querySelectorAll('.preset-banner-card');
+    presetCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const src = card.getAttribute('data-src');
+            const type = card.getAttribute('data-type') || 'image';
+            setVal('heroBgMedia', src);
+            setVal('heroBgType', type);
+            updateActivePresetBanner(src);
+            updateHeroLivePreview();
+            showToast('Banner seleccionado: ' + card.querySelector('strong').textContent);
+        });
+    });
+
+    // 2. Subida de imagen propia con compresión y redimensionamiento automático
+    const fileInput = document.getElementById('heroBgFileInput');
+    const fileNameSpan = document.getElementById('heroFileName');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (fileNameSpan) fileNameSpan.textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Redimensionar a max 1280px para máxima optimización y evitar límite de localStorage
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxW = 1280;
+
+                    if (width > maxW) {
+                        height = Math.round((height * maxW) / width);
+                        width = maxW;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Comprimir en JPEG a 0.78 de calidad (excelente nitidez y bajo peso)
+                    const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+                    setVal('heroBgMedia', optimizedDataUrl);
+                    setVal('heroBgType', 'image');
+                    updateActivePresetBanner('');
+                    updateHeroLivePreview();
+                    showToast('¡Foto cargada y optimizada con éxito!');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 3. Slider de opacidad
+    const opacitySlider = document.getElementById('heroOverlayOpacity');
+    const opacityVal = document.getElementById('overlayOpacityVal');
+    if (opacitySlider) {
+        opacitySlider.addEventListener('input', (e) => {
+            if (opacityVal) opacityVal.textContent = e.target.value + '%';
+            updateHeroLivePreview();
+        });
+    }
+
+    // 4. Inputs en tiempo real
+    ['heroTag', 'heroTitle', 'heroAccent', 'heroQuote', 'heroDesc', 'heroBgMedia', 'heroBgType'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateHeroLivePreview);
+            el.addEventListener('change', updateHeroLivePreview);
+        }
+    });
 }

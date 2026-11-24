@@ -3,19 +3,23 @@
    Medellín, Colombia · Av. Nutibara
    ========================================================================== */
 
-:root {
-    /* Paleta Cromática Negro & Oro */
-    --color-bg-deep: #0A0A0A;          /* Negro obsidiana profundo */
-    --color-bg-main: #111111;          /* Fondo base */
-    --color-bg-card: #181818;          /* Fondo tarjetas */
-    --color-bg-card-hover: #202020;    /* Hover tarjetas */
-    --color-bg-elevated: #262626;      /* Elementos flotantes */
+/* ==========================================================================
+   TEMAS OFICIALES VIP BARBERS CLUB (IDENTIDAD NEGRO & ORO)
+   ========================================================================== */
+
+/* 1. Oro Clásico & Carbón VIP (Predeterminado / Signature) */
+:root, [data-theme="gold-classic"] {
+    --theme-name: "Oro Clásico & Carbón VIP";
+    --color-bg-deep: #0A0A0A;
+    --color-bg-main: #111111;
+    --color-bg-card: #181818;
+    --color-bg-card-hover: #202020;
+    --color-bg-elevated: #262626;
     
-    /* Gradientes & Tonos Oro Metálico */
-    --gold-primary: #D4AF37;           /* Oro clásico elegante */
-    --gold-light: #F4D068;             /* Oro luminoso */
-    --gold-deep: #AA771C;              /* Oro bronceado profundo */
-    --gold-pale: #FFF4D2;              /* Oro marfil para textos claros */
+    --gold-primary: #D4AF37;
+    --gold-light: #F4D068;
+    --gold-deep: #AA771C;
+    --gold-pale: #FFF4D2;
     --gold-gradient: linear-gradient(135deg, #F9E29B 0%, #D4AF37 50%, #A6731B 100%);
     --gold-gradient-hover: linear-gradient(135deg, #FFF0B8 0%, #E6C24E 50%, #BF8726 100%);
     --gold-gradient-soft: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.03) 100%);
@@ -23,12 +27,102 @@
     --gold-border-bright: rgba(212, 175, 55, 0.7);
     --gold-glow: 0 0 25px rgba(212, 175, 55, 0.28);
     --gold-glow-lg: 0 0 45px rgba(212, 175, 55, 0.4);
-
-    /* Textos & Neutros */
-    --color-text-title: #FFFFFF;
-    --color-text-body: #D1D1D1;
-    --color-text-muted: #8E8E8E;
     --color-text-gold: #E5BE53;
+}
+
+/* 2. Oro Rosa Royal & Noche Profunda */
+[data-theme="gold-rose"] {
+    --theme-name: "Oro Rosa Royal & Noche";
+    --color-bg-deep: #0D0A0C;
+    --color-bg-main: #141014;
+    --color-bg-card: #1C161C;
+    --color-bg-card-hover: #261E27;
+    --color-bg-elevated: #302632;
+    
+    --gold-primary: #E0A48E;
+    --gold-light: #F7D0C0;
+    --gold-deep: #B77157;
+    --gold-pale: #FDF0EB;
+    --gold-gradient: linear-gradient(135deg, #FCE0D4 0%, #E0A48E 50%, #B77157 100%);
+    --gold-gradient-hover: linear-gradient(135deg, #FFF0E8 0%, #ECC1B1 50%, #C98268 100%);
+    --gold-gradient-soft: linear-gradient(135deg, rgba(224, 164, 142, 0.18) 0%, rgba(224, 164, 142, 0.03) 100%);
+    --gold-border: rgba(224, 164, 142, 0.32);
+    --gold-border-bright: rgba(224, 164, 142, 0.75);
+    --gold-glow: 0 0 25px rgba(224, 164, 142, 0.32);
+    --gold-glow-lg: 0 0 45px rgba(224, 164, 142, 0.45);
+    --color-text-gold: #EBB6A2;
+}
+
+/* 3. Platino Titanio & Oro Blanco Élite */
+[data-theme="platinum-gold"] {
+    --theme-name: "Platino & Oro Blanco Élite";
+    --color-bg-deep: #0A0C0E;
+    --color-bg-main: #121518;
+    --color-bg-card: #181C21;
+    --color-bg-card-hover: #20262D;
+    --color-bg-elevated: #293038;
+    
+    --gold-primary: #D1D5DB;
+    --gold-light: #F3F4F6;
+    --gold-deep: #9CA3AF;
+    --gold-pale: #FFFFFF;
+    --gold-gradient: linear-gradient(135deg, #FFFFFF 0%, #E5E7EB 40%, #9CA3AF 100%);
+    --gold-gradient-hover: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 50%, #D1D5DB 100%);
+    --gold-gradient-soft: linear-gradient(135deg, rgba(209, 213, 219, 0.16) 0%, rgba(209, 213, 219, 0.03) 100%);
+    --gold-border: rgba(209, 213, 219, 0.32);
+    --gold-border-bright: rgba(243, 244, 246, 0.75);
+    --gold-glow: 0 0 25px rgba(209, 213, 219, 0.28);
+    --gold-glow-lg: 0 0 45px rgba(243, 244, 246, 0.42);
+    --color-text-gold: #E5E7EB;
+}
+
+/* 4. Bronce Vintage & Cuero Negro */
+[data-theme="bronze-vintage"] {
+    --theme-name: "Bronce Vintage & Cuero Negro";
+    --color-bg-deep: #0C0A09;
+    --color-bg-main: #14110F;
+    --color-bg-card: #1C1814;
+    --color-bg-card-hover: #26211C;
+    --color-bg-elevated: #302A24;
+    
+    --gold-primary: #D9822B;
+    --gold-light: #F5B064;
+    --gold-deep: #9E5616;
+    --gold-pale: #FDF3E7;
+    --gold-gradient: linear-gradient(135deg, #FAD2A4 0%, #D9822B 50%, #8C470E 100%);
+    --gold-gradient-hover: linear-gradient(135deg, #FDE6CE 0%, #E69443 50%, #A85A18 100%);
+    --gold-gradient-soft: linear-gradient(135deg, rgba(217, 130, 43, 0.18) 0%, rgba(217, 130, 43, 0.03) 100%);
+    --gold-border: rgba(217, 130, 43, 0.35);
+    --gold-border-bright: rgba(245, 176, 100, 0.75);
+    --gold-glow: 0 0 25px rgba(217, 130, 43, 0.32);
+    --gold-glow-lg: 0 0 45px rgba(217, 130, 43, 0.45);
+    --color-text-gold: #EDB06F;
+}
+
+/* 5. Dorado Esmeralda Imperial */
+[data-theme="emerald-gold"] {
+    --theme-name: "Dorado Esmeralda Imperial";
+    --color-bg-deep: #060B08;
+    --color-bg-main: #0B130E;
+    --color-bg-card: #101B15;
+    --color-bg-card-hover: #16241D;
+    --color-bg-elevated: #1D3027;
+    
+    --gold-primary: #D4AF37;
+    --gold-light: #52D696;
+    --gold-deep: #0F7649;
+    --gold-pale: #D1FAE5;
+    --gold-gradient: linear-gradient(135deg, #F9E29B 0%, #D4AF37 45%, #10B981 100%);
+    --gold-gradient-hover: linear-gradient(135deg, #FFF0B8 0%, #E6C24E 45%, #34D399 100%);
+    --gold-gradient-soft: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    --gold-border: rgba(212, 175, 55, 0.35);
+    --gold-border-bright: rgba(52, 211, 153, 0.75);
+    --gold-glow: 0 0 25px rgba(16, 185, 129, 0.28);
+    --gold-glow-lg: 0 0 45px rgba(212, 175, 55, 0.4);
+    --color-text-gold: #E5BE53;
+}
+
+:root {
     
     /* Sombras & Bordes */
     --border-subtle: rgba(255, 255, 255, 0.08);
@@ -481,11 +575,12 @@ button, input, textarea, select {
     inset: 0;
     background: linear-gradient(
         135deg,
-        rgba(10, 10, 10, 0.95) 0%,
-        rgba(17, 17, 17, 0.85) 50%,
-        rgba(10, 10, 10, 0.9) 100%
+        rgba(10, 10, 10, var(--hero-overlay-opacity, 0.88)) 0%,
+        rgba(17, 17, 17, calc(var(--hero-overlay-opacity, 0.88) - 0.12)) 50%,
+        rgba(10, 10, 10, var(--hero-overlay-opacity, 0.88)) 100%
     );
     z-index: 2;
+    transition: background 0.3s ease;
 }
 
 .hero-content {

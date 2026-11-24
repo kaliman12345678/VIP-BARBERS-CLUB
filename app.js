@@ -269,6 +269,13 @@ function applyAdminSiteData() {
     try {
         const data = JSON.parse(raw);
 
+        // Tema Oficial de la Marca (Negro & Dorado)
+        if (data.theme) {
+            document.documentElement.setAttribute('data-theme', data.theme);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'gold-classic');
+        }
+
         // a) Servicios Dinámicos
         if (Array.isArray(data.services) && data.services.length > 0) {
             const servicesGrid = document.querySelector('.services-grid');
@@ -335,11 +342,20 @@ function applyAdminSiteData() {
             }
         }
 
-        // c) Textos del Hero
+        // c) Portada & Banner Principal
         if (data.hero) {
             const heroTag = document.querySelector('.hero-tag');
             if (heroTag && data.hero.tag) {
                 heroTag.innerHTML = `<i class="fa-solid fa-gem"></i> ${data.hero.tag}`;
+            }
+
+            const heroTitleEl = document.querySelector('.hero-title');
+            if (heroTitleEl && data.hero.title) {
+                if (data.hero.accentText) {
+                    heroTitleEl.innerHTML = `${data.hero.title} <span class="text-gold">${data.hero.accentText}</span>`;
+                } else {
+                    heroTitleEl.textContent = data.hero.title;
+                }
             }
 
             const heroQuote = document.querySelector('.hero-subtitle-quote');
@@ -350,6 +366,12 @@ function applyAdminSiteData() {
             const heroDesc = document.querySelector('.hero-description');
             if (heroDesc && data.hero.description) {
                 heroDesc.innerHTML = data.hero.description;
+            }
+
+            // Opacidad del filtro de contraste de la portada
+            if (data.hero.overlayOpacity !== undefined) {
+                const opacVal = (data.hero.overlayOpacity / 100).toFixed(2);
+                document.documentElement.style.setProperty('--hero-overlay-opacity', opacVal);
             }
 
             // Fondo del Hero (imagen o video)

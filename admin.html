@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="gold-classic">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,8 +98,14 @@
                 </li>
                 <li class="menu-item">
                     <button data-tab="tab-textos">
-                        <i class="fa-solid fa-pen-nib"></i>
-                        <span>Portada & Filosofía</span>
+                        <i class="fa-solid fa-image"></i>
+                        <span>Portada & Banner</span>
+                    </button>
+                </li>
+                <li class="menu-item">
+                    <button data-tab="tab-temas">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>Temas de Marca</span>
                     </button>
                 </li>
                 <li class="menu-item">
@@ -385,14 +391,135 @@
                 </div>
 
                 <!-- ======================================================== -->
-                <!-- PESTAÑA 4: PORTADA & TEXTOS DE MARCA -->
+                <!-- PESTAÑA 4: PORTADA & BANNER PRINCIPAL -->
                 <!-- ======================================================== -->
                 <div class="tab-pane" id="tab-textos">
+                    <!-- 1. PREVISUALIZADOR DEL BANNER EN VIVO -->
                     <div class="card-admin">
                         <div class="card-admin-header">
-                            <h2 class="card-admin-title"><i class="fa-solid fa-font"></i> Textos Principales de la Portada (Hero)</h2>
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-image"></i> Previsualización en Vivo de la Portada</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">Así verán tus clientes el banner de bienvenida según lo configures.</p>
+                            </div>
+                        </div>
+                        <div class="hero-live-preview-box" id="heroLivePreview">
+                            <div class="hero-preview-bg-layer" id="heroPreviewBgLayer">
+                                <img src="hero-vip-barbershop.jpg" id="heroPreviewImg" alt="Vista previa banner">
+                                <div class="hero-preview-overlay" id="heroPreviewOverlay"></div>
+                            </div>
+                            <div class="hero-preview-content">
+                                <span class="hero-preview-tag" id="prevHeroTag"><i class="fa-solid fa-gem"></i> Cuidado Masculino Premium · Av. Nutibara</span>
+                                <h2 class="hero-preview-title" id="prevHeroTitle">VIP BARBERS CLUB</h2>
+                                <p class="hero-preview-quote" id="prevHeroQuote">«Más que un corte, una experiencia»</p>
+                                <p class="hero-preview-desc" id="prevHeroDesc">Encontramos el estilo que mejor se adapta a tu rostro, cabello y personalidad...</p>
+                                <div class="hero-preview-buttons">
+                                    <span class="btn-preview-gold">Agendar Mi Cita VIP</span>
+                                    <span class="btn-preview-outline">Ver Catálogo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. CAMBIAR FONDO DEL BANNER: SUBIR IMAGEN O ELEGIR PREDISEÑADA -->
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-sliders"></i> Cambiar Fondo del Banner (Imagen o Video)</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">Elige una de las imágenes exclusivas de la marca, sube tu propia foto o pega una URL.</p>
+                            </div>
                         </div>
 
+                        <!-- Galería de Banners Prediseñados VIP -->
+                        <label class="form-label-admin" style="margin-bottom: 0.75rem; display: block;">
+                            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--admin-gold);"></i> Banners Oficiales de la Marca (Selecciona con 1 Clic):
+                        </label>
+                        <div class="preset-banners-grid" id="presetBannersGrid">
+                            <div class="preset-banner-card active" data-src="hero-vip-barbershop.jpg" data-type="image">
+                                <img src="hero-vip-barbershop.jpg" alt="Interior Club VIP">
+                                <div class="preset-banner-info">
+                                    <strong>Interior Barbershop</strong>
+                                    <span>Sillones & estilo clásico</span>
+                                </div>
+                            </div>
+                            <div class="preset-banner-card" data-src="corte-precision-barbero.jpg" data-type="image">
+                                <img src="corte-precision-barbero.jpg" alt="Precisión Barbero">
+                                <div class="preset-banner-info">
+                                    <strong>Técnica de Precisión</strong>
+                                    <span>Navaja & barbero pro</span>
+                                </div>
+                            </div>
+                            <div class="preset-banner-card" data-src="vapor-ozono-ritual.jpg" data-type="image">
+                                <img src="vapor-ozono-ritual.jpg" alt="Vapor de Ozono">
+                                <div class="preset-banner-info">
+                                    <strong>Ritual Vapor Ozono</strong>
+                                    <span>Spa facial masculino</span>
+                                </div>
+                            </div>
+                            <div class="preset-banner-card" data-src="lavado-masaje-capilar.jpg" data-type="image">
+                                <img src="lavado-masaje-capilar.jpg" alt="Lavado Capilar">
+                                <div class="preset-banner-info">
+                                    <strong>Lavado & Masaje</strong>
+                                    <span>Relax & descanso capilar</span>
+                                </div>
+                            </div>
+                            <div class="preset-banner-card" data-src="trabajo-corte-precision.jpg" data-type="image">
+                                <img src="trabajo-corte-precision.jpg" alt="Corte Desvanecido">
+                                <div class="preset-banner-info">
+                                    <strong>Corte Fade VIP</strong>
+                                    <span>Perfilado magistral</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subir Archivo Propio desde Celular o PC -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1.5px dashed var(--admin-gold-border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;">
+                            <h4 style="color: var(--admin-gold); font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> ¿Deseas subir una foto propia desde tu celular o computadora?
+                            </h4>
+                            <p style="font-size: 0.8rem; color: #AAA; margin-bottom: 1rem;">
+                                La imagen se optimiza y comprime automáticamente para que cargue ultra rápido en cualquier celular.
+                            </p>
+                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                <label for="heroBgFileInput" class="btn-admin btn-admin-gold" style="cursor: pointer; margin: 0;">
+                                    <i class="fa-solid fa-folder-open"></i> Elegir Foto desde Mi Galería / Archivos...
+                                </label>
+                                <input type="file" id="heroBgFileInput" accept="image/*" style="display: none;">
+                                <span id="heroFileName" style="font-size: 0.85rem; color: #888;">Ninguna imagen nueva seleccionada</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3" style="margin-top: 1.5rem;">
+                            <div class="form-group-admin" style="grid-column: span 2;">
+                                <label class="form-label-admin">Ruta o URL Directa del Fondo</label>
+                                <input type="text" id="heroBgMedia" class="form-input-admin" placeholder="hero-vip-barbershop.jpg o https://...">
+                            </div>
+                            <div class="form-group-admin">
+                                <label class="form-label-admin">Tipo de Medio</label>
+                                <select id="heroBgType" class="form-input-admin">
+                                    <option value="image">Imagen de Fondo</option>
+                                    <option value="video">Video de Fondo (MP4)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Slider de Opacidad / Oscurecimiento -->
+                        <div class="form-group-admin" style="margin-top: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label class="form-label-admin" style="margin: 0;"><i class="fa-solid fa-circle-half-stroke"></i> Oscurecimiento de la Portada (Filtro de Contraste)</label>
+                                <span id="overlayOpacityVal" style="color: var(--admin-gold); font-weight: 700; font-size: 0.95rem;">88%</span>
+                            </div>
+                            <input type="range" id="heroOverlayOpacity" min="30" max="95" value="88" style="width: 100%; accent-color: var(--admin-gold); cursor: pointer;">
+                            <small style="color: #888; font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+                                Un valor más alto (85-90%) hace que los textos resalten con máxima nitidez. Un valor más bajo (50-70%) permite ver la foto de fondo con mayor brillo.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- 3. PERSONALIZAR TEXTOS Y FILOSOFÍA -->
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <h2 class="card-admin-title"><i class="fa-solid fa-font"></i> Textos Principales del Banner</h2>
+                        </div>
                         <div class="form-grid-2">
                             <div class="form-group-admin">
                                 <label class="form-label-admin">Etiqueta Superior (Badge)</label>
@@ -403,33 +530,129 @@
                                 <input type="text" id="heroTitle" class="form-input-admin">
                             </div>
                         </div>
-
                         <div class="form-group-admin">
                             <label class="form-label-admin">Eslogan Destacado</label>
                             <input type="text" id="heroAccent" class="form-input-admin">
                         </div>
-
                         <div class="form-group-admin">
                             <label class="form-label-admin">Palabras y Pensamiento de la Propietaria (Cita)</label>
                             <textarea id="heroQuote" class="form-input-admin" style="min-height: 80px;"></textarea>
                         </div>
-
                         <div class="form-group-admin">
                             <label class="form-label-admin">Párrafo Descriptivo de la Experiencia</label>
                             <textarea id="heroDesc" class="form-input-admin" style="min-height: 100px;"></textarea>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="form-grid-2">
-                            <div class="form-group-admin">
-                                <label class="form-label-admin">Fondo de Portada (Nombre de archivo o URL)</label>
-                                <input type="text" id="heroBgMedia" class="form-input-admin">
+                <!-- ======================================================== -->
+                <!-- PESTAÑA: TEMAS DE MARCA (NEGRO Y DORADO) -->
+                <!-- ======================================================== -->
+                <div class="tab-pane" id="tab-temas">
+                    <div class="card-admin">
+                        <div class="card-admin-header">
+                            <div>
+                                <h2 class="card-admin-title"><i class="fa-solid fa-palette"></i> Temas & Estilos Oficiales de la Marca</h2>
+                                <p style="font-size: 0.85rem; color: #888; margin-top: 0.25rem;">
+                                    Personaliza la atmósfera visual de VIP BARBERS CLUB respetando siempre la identidad premium en Negro y Dorado. Al hacer clic en un tema, se activa de inmediato.
+                                </p>
                             </div>
-                            <div class="form-group-admin">
-                                <label class="form-label-admin">Tipo de Fondo</label>
-                                <select id="heroBgType" class="form-input-admin">
-                                    <option value="image">Imagen de Fondo</option>
-                                    <option value="video">Video de Fondo (MP4)</option>
-                                </select>
+                        </div>
+
+                        <div class="theme-cards-grid" id="themeCardsGrid">
+                            <!-- 1. Oro Clásico & Carbón VIP -->
+                            <div class="theme-card active" data-theme-id="gold-classic">
+                                <div class="theme-card-header">
+                                    <h4>Oro Clásico & Carbón VIP</h4>
+                                    <span class="theme-status-badge"><i class="fa-solid fa-circle-check"></i> Activo</span>
+                                </div>
+                                <p class="theme-card-desc">La firma original de la marca. Oro metálico radiante sobre negro obsidiana profundo. Elegancia atemporal.</p>
+                                <div class="theme-swatches">
+                                    <span class="swatch" style="background: #0A0A0A;" title="Negro Obsidiana"></span>
+                                    <span class="swatch" style="background: #181818;" title="Fondo Tarjetas"></span>
+                                    <span class="swatch" style="background: #D4AF37;" title="Oro Clásico"></span>
+                                    <span class="swatch" style="background: #F4D068;" title="Oro Luminoso"></span>
+                                    <span class="swatch" style="background: linear-gradient(135deg, #F9E29B, #D4AF37, #A6731B);" title="Gradiente Dorado"></span>
+                                </div>
+                                <button type="button" class="btn-admin btn-admin-gold btn-theme-select" style="width: 100%;">
+                                    <i class="fa-solid fa-check"></i> Tema Activo
+                                </button>
+                            </div>
+
+                            <!-- 2. Oro Rosa Royal & Noche -->
+                            <div class="theme-card" data-theme-id="gold-rose">
+                                <div class="theme-card-header">
+                                    <h4>Oro Rosa Royal & Noche</h4>
+                                    <span class="theme-status-badge"><i class="fa-solid fa-circle-check"></i> Activo</span>
+                                </div>
+                                <p class="theme-card-desc">Lujo contemporáneo y cálido. Matices de oro rosa champán y bronce rosado sobre fondo negro noche.</p>
+                                <div class="theme-swatches">
+                                    <span class="swatch" style="background: #0D0A0C;" title="Negro Noche"></span>
+                                    <span class="swatch" style="background: #1C161C;" title="Carbón Rosado"></span>
+                                    <span class="swatch" style="background: #E0A48E;" title="Oro Rosa"></span>
+                                    <span class="swatch" style="background: #F7D0C0;" title="Champán Rosado"></span>
+                                    <span class="swatch" style="background: linear-gradient(135deg, #FCE0D4, #E0A48E, #B77157);" title="Gradiente Oro Rosa"></span>
+                                </div>
+                                <button type="button" class="btn-admin btn-admin-outline btn-theme-select" style="width: 100%;">
+                                    Activar Este Tema
+                                </button>
+                            </div>
+
+                            <!-- 3. Platino & Oro Blanco Élite -->
+                            <div class="theme-card" data-theme-id="platinum-gold">
+                                <div class="theme-card-header">
+                                    <h4>Platino & Oro Blanco Élite</h4>
+                                    <span class="theme-status-badge"><i class="fa-solid fa-circle-check"></i> Activo</span>
+                                </div>
+                                <p class="theme-card-desc">Estética de alta precisión y modernidad. Destellos en platino blanco y titanio sobre negro grafito mineral.</p>
+                                <div class="theme-swatches">
+                                    <span class="swatch" style="background: #0A0C0E;" title="Grafito Oscuro"></span>
+                                    <span class="swatch" style="background: #181C21;" title="Carbón Mineral"></span>
+                                    <span class="swatch" style="background: #D1D5DB;" title="Platino"></span>
+                                    <span class="swatch" style="background: #F3F4F6;" title="Oro Blanco"></span>
+                                    <span class="swatch" style="background: linear-gradient(135deg, #FFFFFF, #E5E7EB, #9CA3AF);" title="Gradiente Platino"></span>
+                                </div>
+                                <button type="button" class="btn-admin btn-admin-outline btn-theme-select" style="width: 100%;">
+                                    Activar Este Tema
+                                </button>
+                            </div>
+
+                            <!-- 4. Bronce Vintage & Cuero Negro -->
+                            <div class="theme-card" data-theme-id="bronze-vintage">
+                                <div class="theme-card-header">
+                                    <h4>Bronce Vintage & Cuero Negro</h4>
+                                    <span class="theme-status-badge"><i class="fa-solid fa-circle-check"></i> Activo</span>
+                                </div>
+                                <p class="theme-card-desc">Tradición clásica y artesanal. Bronce envejecido, ámbar dorado y tonos cálidos sobre cuero negro profundo.</p>
+                                <div class="theme-swatches">
+                                    <span class="swatch" style="background: #0C0A09;" title="Cuero Negro"></span>
+                                    <span class="swatch" style="background: #1C1814;" title="Madera Noble"></span>
+                                    <span class="swatch" style="background: #D9822B;" title="Bronce Ámbar"></span>
+                                    <span class="swatch" style="background: #F5B064;" title="Oro Cobre"></span>
+                                    <span class="swatch" style="background: linear-gradient(135deg, #FAD2A4, #D9822B, #8C470E);" title="Gradiente Bronce"></span>
+                                </div>
+                                <button type="button" class="btn-admin btn-admin-outline btn-theme-select" style="width: 100%;">
+                                    Activar Este Tema
+                                </button>
+                            </div>
+
+                            <!-- 5. Dorado Esmeralda Imperial -->
+                            <div class="theme-card" data-theme-id="emerald-gold">
+                                <div class="theme-card-header">
+                                    <h4>Dorado Esmeralda Imperial</h4>
+                                    <span class="theme-status-badge"><i class="fa-solid fa-circle-check"></i> Activo</span>
+                                </div>
+                                <p class="theme-card-desc">Prestigio de la tierra colombiana. Dorado imperial clásico con acentos verde esmeralda sobre negro bosque nocturno.</p>
+                                <div class="theme-swatches">
+                                    <span class="swatch" style="background: #060B08;" title="Esmeralda Oscuro"></span>
+                                    <span class="swatch" style="background: #101B15;" title="Fondo Verde Selva"></span>
+                                    <span class="swatch" style="background: #D4AF37;" title="Oro Imperial"></span>
+                                    <span class="swatch" style="background: #52D696;" title="Esmeralda Brillante"></span>
+                                    <span class="swatch" style="background: linear-gradient(135deg, #F9E29B, #D4AF37, #10B981);" title="Gradiente Oro Esmeralda"></span>
+                                </div>
+                                <button type="button" class="btn-admin btn-admin-outline btn-theme-select" style="width: 100%;">
+                                    Activar Este Tema
+                                </button>
                             </div>
                         </div>
                     </div>
